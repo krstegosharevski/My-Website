@@ -25,10 +25,17 @@ import {
  * page where the water is the foreground event, and a second animation in the
  * same viewport would compete with it.
  *
- * Contrast was measured rather than assumed. Over the densest part of the water
- * at `intensity={0.6}`: on paper, body text lands at about 15.3:1 and muted
- * text at about 4.9:1; on dark, about 16.6:1 and 5.8:1. All pass AA for normal
- * text.
+ * Contrast was measured rather than assumed, against the water tuning at the
+ * time (see globals.css). Over the densest part of the water at
+ * `intensity={0.6}`: on paper, body text landed at about 15.3:1 and muted text
+ * at about 4.9:1; on dark, about 16.6:1 and 5.8:1. All passed AA for normal
+ * text, muted text with less margin than the rest.
+ *
+ * `intensity` here is deliberately left unchanged from that measurement even
+ * though the home hero's went up — `--water-alpha` (globals.css) went up
+ * globally as part of the same tuning pass, which still moves this page's
+ * effective wash. Re-measure before shipping; muted text (4.9:1) had the
+ * least room of the four figures above.
  *
  * @returns {JSX.Element}
  */

@@ -485,15 +485,16 @@ export function Styleguide() {
           </p>
         </div>
 
-        <SubHeading>variant="horizon" · intensity={'{0.35}'}</SubHeading>
+        <SubHeading>variant="horizon" · intensity={'{0.55}'}</SubHeading>
         <Note>
           The quieter version behind the home hero, pressed into the bottom
-          edge so it never competes with the headline.
+          edge so it never competes with the headline. Raised from 0.35 after
+          review found the wave motion imperceptible at that value.
         </Note>
         <div className="relative h-80 overflow-hidden rounded-(--radius-base) border border-hairline bg-surface-raised">
           <WaterField
             variant="horizon"
-            intensity={0.35}
+            intensity={0.55}
             timeScale={fastWater ? 20 : 1}
             className="absolute inset-0"
           />

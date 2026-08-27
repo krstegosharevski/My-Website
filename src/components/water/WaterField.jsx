@@ -4,11 +4,15 @@ import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { cn } from '@/lib/cn'
 
 /* ---------------------------------------------------------------------------
-   §3.6. Sitting by a lake before sunrise: calm, almost still, small movement,
-   and now and then a bird crosses.
+   §3.6. Sitting by a lake before sunrise: calm, small movement, and now and
+   then a bird crosses or a fish breaks the surface (the ripple event).
 
-   The tuning rule from the plan: if it reads as an animation, the amplitude is
-   too high. Cut amplitude and opacity before touching the frame rate.
+   The original spec erred toward "if it reads as an animation, the amplitude
+   is too high." In review that read as not animating at all — BANDS and the
+   ripple constants below were raised from the §3.6 values so the motion is
+   clearly visible rather than only provable by staring at it. If it starts to
+   compete with foreground content, cut amplitude and opacity before touching
+   the frame rate — that half of the original rule still holds.
    --------------------------------------------------------------------------- */
 
 const FPS = 30
@@ -36,26 +40,35 @@ const LAYOUTS = {
  * and phases so the crests never line up into a repeating pattern.
  *
  * `amp` is the band's total amplitude in CSS pixels, split across its three
- * sines by `WEIGHTS`. The range across the four bands is 6–14px, per §3.6.
- * Periods are 22–45s, so a full cycle is slow enough to be missed.
+ * sines by `WEIGHTS`. Originally 6–14px per §3.6; raised to 10–24px after
+ * review found the motion imperceptible at the spec value on both the home
+ * hero and the About page. Amplitude does not touch fill alpha (see `draw`),
+ * so this is the contrast-neutral lever — it changes how far the line moves,
+ * not the colour of anything. Periods are 22–45s, unchanged, so a full cycle
+ * is still slow enough to be missed at a glance.
  *
  * Values are fixed rather than random: the effect re-runs when props change,
  * and randomising here would make the water jump at that moment.
  */
 const BANDS = [
-  { amp: 6, wavelengths: [0.9, 0.45, 0.28], periods: [34, 27, 41], phases: [0.0, 1.7, 3.4] },
-  { amp: 8, wavelengths: [1.1, 0.5, 0.33], periods: [29, 38, 23], phases: [0.8, 2.6, 4.9] },
-  { amp: 11, wavelengths: [1.3, 0.6, 0.37], periods: [26, 33, 45], phases: [1.9, 3.9, 0.6] },
-  { amp: 14, wavelengths: [1.6, 0.72, 0.44], periods: [22, 36, 30], phases: [3.1, 1.2, 5.5] },
+  { amp: 10, wavelengths: [0.9, 0.45, 0.28], periods: [34, 27, 41], phases: [0.0, 1.7, 3.4] },
+  { amp: 14, wavelengths: [1.1, 0.5, 0.33], periods: [29, 38, 23], phases: [0.8, 2.6, 4.9] },
+  { amp: 19, wavelengths: [1.3, 0.6, 0.37], periods: [26, 33, 45], phases: [1.9, 3.9, 0.6] },
+  { amp: 24, wavelengths: [1.6, 0.72, 0.44], periods: [22, 36, 30], phases: [3.1, 1.2, 5.5] },
 ]
 
 const WEIGHTS = [0.5, 0.3, 0.2]
 
-/** Ripple: expands and fades over 4s, somewhere new every 25–60s. */
-const RIPPLE_DURATION = 4
-const RIPPLE_MIN_GAP = 25
-const RIPPLE_MAX_GAP = 60
-const RIPPLE_MAX_RADIUS = 110
+/**
+ * Ripple, i.e. the "fish jumping" event: expands and fades, somewhere new at a
+ * random interval. Originally a 110px-radius ring every 25–60s; widened,
+ * thickened and made more frequent after review, so it reads clearly as
+ * something breaking the surface rather than a faint line easy to miss.
+ */
+const RIPPLE_DURATION = 4.5
+const RIPPLE_MIN_GAP = 16
+const RIPPLE_MAX_GAP = 36
+const RIPPLE_MAX_RADIUS = 170
 
 /** Bird: crosses the upper area in ~18s, every 60–120s, at 0.12 opacity. */
 const BIRD_DURATION = 18
@@ -247,9 +260,9 @@ export function WaterField({
           ctx.beginPath()
           ctx.ellipse(ripple.x, ripple.y, radius, radius * 0.26, 0, 0, Math.PI * 2)
           ctx.strokeStyle = `rgba(${palette.rgb}, ${
-            palette.alpha * strength * 1.6 * (1 - age)
+            palette.alpha * strength * 2.6 * (1 - age)
           })`
-          ctx.lineWidth = 1
+          ctx.lineWidth = 1.8
           ctx.stroke()
         }
       }

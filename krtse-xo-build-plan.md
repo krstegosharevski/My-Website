@@ -120,9 +120,9 @@ Under `prefers-reduced-motion: reduce`: Lenis off, all reveals render final stat
 
 The About page background, and a quieter version behind the home hero. The brief: sitting by a lake before sunrise. Calm, almost still, small movement, and now and then a bird crosses.
 
-- **Canvas 2D**, no WebGL. Four stacked bands, each the sum of two or three sines with different frequencies, phases and drift speeds. Amplitude 6–14px, full period 20–40s. If it reads as an animation, the amplitude is too high.
-- **Color:** `--signal` at 3–7% alpha, band nearest the horizon slightly lighter.
-- **Rare events:** a ripple ring expands and fades at a random point every 25–60s, dissipating over 4s. A bird silhouette at 0.12 opacity crosses the upper area every 60–120s, taking ~18s. Random intervals inside a range, never a fixed loop.
+- **Canvas 2D**, no WebGL. Four stacked bands, each the sum of two or three sines with different frequencies, phases and drift speeds. Amplitude 10–24px, full period 20–40s. (Originally specified as 6–14px "if it reads as an animation, the amplitude is too high" — raised after that read as not animating at all. Amplitude is contrast-neutral: it changes how far the line moves, not the colour of anything, so this lever doesn't touch the About page's text-contrast measurement below.)
+- **Color:** `--signal` at 7–10% alpha (`--water-alpha` in globals.css; originally 3–7%, raised for the same reason as amplitude — this one *does* affect the About page's measured text contrast, see §7 Phase 6), band nearest the horizon slightly lighter.
+- **Rare events:** a ripple ring — the "fish jumping" event — expands and fades at a random point every 16–36s, dissipating over 4.5s, radius up to 170px. (Originally 25–60s / 110px; widened and made more frequent so it clearly reads as something breaking the surface rather than a faint line easy to miss.) A bird silhouette at 0.12 opacity crosses the upper area every 60–120s, taking ~18s — unchanged, wasn't flagged. Random intervals inside a range, never a fixed loop.
 - **Text sits still on top.** Canvas is `pointer-events: none`, behind everything.
 - **Performance:** rAF capped at 30fps, paused by `IntersectionObserver` when offscreen and on `document.hidden`, DPR capped at 2, debounced resize. Reduced motion draws one frame and stops.
 

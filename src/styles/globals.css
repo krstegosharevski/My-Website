@@ -112,7 +112,13 @@
     --text-primary: var(--color-paper-text);
     --text-secondary: var(--color-paper-muted);
     --text-link: var(--color-signal-ink);
-    --water-alpha: 0.07;
+    /* Was 0.07. Raised after review found the water imperceptible — see
+       src/components/water/WaterField.jsx. Kept moderate rather than doubled:
+       this token also sets the About page's background wash, and its bio text
+       contrast was measured against the old value (see the comment on
+       About.jsx) — re-verify that measurement against this value before
+       shipping, since the wash sits directly under the body text there. */
+    --water-alpha: 0.1;
     --water-rgb: 31, 94, 255;
   }
 
@@ -123,7 +129,8 @@
     --text-primary: var(--color-ink-text);
     --text-secondary: var(--color-ink-muted);
     --text-link: var(--color-signal-lo);
-    --water-alpha: 0.05;
+    /* Was 0.05. See the light-mode --water-alpha comment above. */
+    --water-alpha: 0.07;
   }
 
   html {
