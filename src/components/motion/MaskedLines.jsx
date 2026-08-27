@@ -53,10 +53,14 @@ function measureLines(el) {
  * @param {string} props.text The heading. Plain text, so it can be split.
  * @param {'h1' | 'h2'} [props.as='h2'] Heading level. Keep the page order sequential.
  * @param {number} [props.delay=0] Seconds to wait before the first line rises.
+ * @param {boolean} [props.play] Override the in-view trigger. Omit for the
+ *   default behaviour; pass `false` to hold the lines down and `true` to
+ *   release them. The home hero uses this to rise on the dandelion intro's
+ *   `onComplete` rather than on mount.
  * @param {string} [props.className] Extra classes.
  * @returns {JSX.Element}
  */
-export function MaskedLines({ text, as: Tag = 'h2', delay = 0, className }) {
+export function MaskedLines({ text, as: Tag = 'h2', delay = 0, play, className }) {
   const reducedMotion = useReducedMotion()
   const containerRef = useRef(/** @type {HTMLElement | null} */ (null))
   const widthRef = useRef(0)
@@ -70,6 +74,11 @@ export function MaskedLines({ text, as: Tag = 'h2', delay = 0, className }) {
   const [hasPlayed, setHasPlayed] = useState(false)
 
   const inView = useInView(containerRef, { once: true, amount: 0.2 })
+
+  /* `play` overrides the in-view trigger when the caller passes it. Both still
+     have to be satisfied, so a gated heading further down the page does not
+     rise before it has been scrolled to. */
+  const shouldRise = play === undefined ? inView : play && inView
 
   /* New text breaks differently, so the split is discarded during render rather
      than in an effect — React re-runs this render immediately and the stale
@@ -156,7 +165,7 @@ export function MaskedLines({ text, as: Tag = 'h2', delay = 0, className }) {
           <motion.span
             className="block"
             initial={hasPlayed ? false : { y: '110%' }}
-            animate={inView || hasPlayed ? { y: '0%' } : { y: '110%' }}
+            animate={shouldRise || hasPlayed ? { y: '0%' } : { y: '110%' }}
             transition={{
               duration: DURATION,
               ease: EASE,
