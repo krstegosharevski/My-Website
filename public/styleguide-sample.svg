@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img">
+  <title>Placeholder</title>
+  <rect width="1200" height="750" fill="#e5e2dc" />
+  <rect x="0" y="0" width="1200" height="420" fill="#faf9f6" />
+  <g fill="none" stroke="#1f5eff" stroke-width="2">
+    <path d="M0 470 C 200 440, 400 500, 600 470 S 1000 440, 1200 470" opacity="0.5" />
+    <path d="M0 530 C 220 505, 420 560, 620 530 S 1010 500, 1200 530" opacity="0.35" />
+    <path d="M0 600 C 180 575, 430 630, 640 600 S 1020 570, 1200 600" opacity="0.22" />
+    <path d="M0 670 C 240 645, 460 700, 660 670 S 1030 640, 1200 670" opacity="0.14" />
+  </g>
+  <rect x="80" y="120" width="320" height="18" rx="2" fill="#14161a" opacity="0.85" />
+  <rect x="80" y="164" width="500" height="18" rx="2" fill="#14161a" opacity="0.55" />
+  <rect x="80" y="208" width="240" height="18" rx="2" fill="#14161a" opacity="0.3" />
+  <circle cx="1060" cy="150" r="46" fill="none" stroke="#1f5eff" stroke-width="2" opacity="0.6" />
+</svg>

@@ -1,4 +1,15 @@
+import { ImageWipe } from '@/components/motion/ImageWipe'
+import { Marquee } from '@/components/motion/Marquee'
+import { MaskedLines } from '@/components/motion/MaskedLines'
+import { Reveal } from '@/components/motion/Reveal'
+import { Button } from '@/components/primitives/Button'
+import { Chip } from '@/components/primitives/Chip'
+import { Container } from '@/components/primitives/Container'
+import { Divider } from '@/components/primitives/Divider'
+import { Eyebrow } from '@/components/primitives/Eyebrow'
+import { Stat } from '@/components/primitives/Stat'
 import { ThemeToggle } from '@/components/site/ThemeToggle'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { cn } from '@/lib/cn'
 
 /**
@@ -15,11 +26,7 @@ const SIGNAL_TOKENS = [
     hex: '#1F5EFF',
     use: 'Fills, active states, focus rings, water tint. Never body text.',
   },
-  {
-    name: '--color-signal-lo',
-    hex: '#8FB4FF',
-    use: 'Small blue text on dark.',
-  },
+  { name: '--color-signal-lo', hex: '#8FB4FF', use: 'Small blue text on dark.' },
   {
     name: '--color-signal-ink',
     hex: '#1A4FD6',
@@ -83,12 +90,26 @@ const TYPE_SCALE = [
   },
 ]
 
+/** @type {('signal' | 'outline' | 'ghost')[]} */
+const BUTTON_VARIANTS = ['signal', 'outline', 'ghost']
+
+const STACK = [
+  'React',
+  'Vite',
+  'Tailwind',
+  'Node',
+  'PostgreSQL',
+  'Stripe',
+  'Vercel',
+  'Playwright',
+]
+
 /**
  * A labelled block in the styleguide.
  *
  * @param {object} props
- * @param {string} props.index   Mono index, e.g. "01".
- * @param {string} props.title   Section heading.
+ * @param {string} props.index Mono index, e.g. "01".
+ * @param {string} props.title Section heading.
  * @param {React.ReactNode} props.children
  * @returns {JSX.Element}
  */
@@ -101,6 +122,26 @@ function Block({ index, title, children }) {
       </div>
       {children}
     </section>
+  )
+}
+
+/**
+ * @param {object} props
+ * @param {string} props.children
+ * @returns {JSX.Element}
+ */
+function SubHeading({ children }) {
+  return <h3 className="mono-label mt-12 mb-6 first:mt-0">{children}</h3>
+}
+
+/**
+ * @param {object} props
+ * @param {React.ReactNode} props.children
+ * @returns {JSX.Element}
+ */
+function Note({ children }) {
+  return (
+    <p className="prose-measure mb-8 text-sm text-secondary">{children}</p>
   )
 }
 
@@ -128,40 +169,6 @@ function Swatch({ token }) {
 }
 
 /**
- * Demo button. Phase 1 replaces this with the real `Button` primitive, which
- * adds the hover label roll from §3.5.4.
- *
- * @param {object} props
- * @param {'signal' | 'outline' | 'ghost'} props.variant
- * @param {boolean} [props.disabled]
- * @param {string} [props.className]
- * @param {React.ReactNode} props.children
- * @returns {JSX.Element}
- */
-function DemoButton({ variant, disabled, className, children }) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      className={cn(
-        'inline-flex items-center justify-center px-6 py-3 text-sm',
-        'transition-colors duration-(--duration-hover)',
-        'disabled:cursor-not-allowed disabled:opacity-40',
-        variant === 'signal' &&
-          'rounded-full bg-signal text-white hover:bg-signal-ink',
-        variant === 'outline' &&
-          'rounded-(--radius-base) border border-hairline hover:border-signal',
-        variant === 'ghost' &&
-          'rounded-(--radius-base) text-secondary hover:text-primary',
-        className,
-      )}
-    >
-      {children}
-    </button>
-  )
-}
-
-/**
  * Token and component reference. Not linked from the site — open `/styleguide`
  * directly. Kept out of `MarketingLayout` so the nav and footer don't interfere,
  * and lazy-loaded so it never ships in a visitor's bundle.
@@ -169,50 +176,61 @@ function DemoButton({ variant, disabled, className, children }) {
  * @returns {JSX.Element}
  */
 export function Styleguide() {
+  const reducedMotion = useReducedMotion()
+
   return (
-    <div className="mx-auto max-w-site px-6 pb-24">
+    <Container className="pb-24">
       <header className="flex items-start justify-between gap-6 py-16">
         <div>
-          <p className="mono-label">Reference</p>
+          <Eyebrow>Reference</Eyebrow>
           <h1 className="mt-4 text-display-xl">Styleguide</h1>
           <p className="prose-measure mt-6 text-lead text-secondary">
-            Every token this site is allowed to use. If a value is not on this
-            page, it does not belong in a component.
+            Every token and component this site is allowed to use. If a value is
+            not on this page, it does not belong in a component.
+          </p>
+          <p
+            className={cn(
+              'mt-6 inline-block rounded-(--radius-base) border px-3 py-2 font-mono text-sm',
+              reducedMotion
+                ? 'border-signal text-link'
+                : 'border-hairline text-secondary',
+            )}
+          >
+            prefers-reduced-motion:{' '}
+            {reducedMotion ? 'reduce — everything below is static' : 'no-preference'}
           </p>
         </div>
         <ThemeToggle className="mt-2 shrink-0" />
       </header>
 
       <Block index="01" title="Colour">
-        <h3 className="mono-label mb-6">Signal</h3>
+        <SubHeading>Signal</SubHeading>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {SIGNAL_TOKENS.map((token) => (
             <Swatch key={token.name} token={token} />
           ))}
         </div>
 
-        <h3 className="mono-label mt-12 mb-6">Paper — light, the default</h3>
+        <SubHeading>Paper — light, the default</SubHeading>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {PAPER_TOKENS.map((token) => (
             <Swatch key={token.name} token={token} />
           ))}
         </div>
 
-        <h3 className="mono-label mt-12 mb-6">Ink — dark</h3>
+        <SubHeading>Ink — dark</SubHeading>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {INK_TOKENS.map((token) => (
             <Swatch key={token.name} token={token} />
           ))}
         </div>
 
-        <h3 className="mono-label mt-12 mb-6">
-          Semantic — what components actually use
-        </h3>
-        <p className="prose-measure mb-6 text-sm text-secondary">
+        <SubHeading>Semantic — what components actually use</SubHeading>
+        <Note>
           These resolve through the <code className="font-mono">.dark</code>{' '}
           class, so a component never names a theme. Toggle the theme above and
           the values below change while the class names stay the same.
-        </p>
+        </Note>
         <ul className="grid gap-3 sm:grid-cols-2">
           {SEMANTIC_TOKENS.map((token) => (
             <li
@@ -261,19 +279,24 @@ export function Styleguide() {
       </Block>
 
       <Block index="03" title="Buttons">
-        <p className="prose-measure mb-8 text-sm text-secondary">
-          The primary button is a pill; everything else is 4px. Phase 1 adds the
-          hover label roll. Tab through these to check the focus ring.
-        </p>
+        <Note>
+          The primary button is a pill; everything else is 4px. Hover one to see
+          the label roll from §3.5.4 — the label is rendered twice in a masked
+          box and the duplicate slides in as the original leaves. Tab through
+          them to check the focus ring.
+        </Note>
         <div className="space-y-8">
-          {['signal', 'outline', 'ghost'].map((variant) => (
+          {BUTTON_VARIANTS.map((variant) => (
             <div key={variant}>
               <p className="mono-label mb-4">{variant}</p>
               <div className="flex flex-wrap items-center gap-4">
-                <DemoButton variant={variant}>Start a project</DemoButton>
-                <DemoButton variant={variant} disabled>
+                <Button variant={variant}>Start a project</Button>
+                <Button variant={variant} to="/websites">
+                  See the work
+                </Button>
+                <Button variant={variant} disabled>
                   Disabled
-                </DemoButton>
+                </Button>
               </div>
             </div>
           ))}
@@ -281,31 +304,161 @@ export function Styleguide() {
       </Block>
 
       <Block index="04" title="Chips">
-        <p className="prose-measure mb-8 text-sm text-secondary">
-          Mono, 4px radius, hairline border. Used for stack tags and the work
-          filters.
-        </p>
+        <Note>
+          Mono, 4px radius, hairline border. Static chips carry stack tags. The
+          interactive form is a real button with a pressed state, used for the
+          work filters.
+        </Note>
+        <SubHeading>Static</SubHeading>
         <ul className="flex flex-wrap gap-2">
-          {['React', 'Vite', 'Tailwind', 'Node', 'PostgreSQL', 'Stripe'].map(
-            (label) => (
-              <li
-                key={label}
-                className="rounded-(--radius-base) border border-hairline px-3 py-1.5 font-mono text-label tracking-(--text-label--letter-spacing) uppercase text-secondary"
-              >
-                {label}
-              </li>
-            ),
-          )}
+          {STACK.slice(0, 6).map((label) => (
+            <li key={label}>
+              <Chip>{label}</Chip>
+            </li>
+          ))}
         </ul>
+
+        <SubHeading>Interactive</SubHeading>
+        <div className="flex flex-wrap gap-2">
+          <Chip selected onClick={() => {}}>
+            All
+          </Chip>
+          <Chip onClick={() => {}}>Website</Chip>
+          <Chip onClick={() => {}}>Portal</Chip>
+          <Chip onClick={() => {}}>Integration</Chip>
+        </div>
       </Block>
 
-      <Block index="05" title="Divider">
-        <p className="prose-measure mb-8 text-sm text-secondary">
-          One hairline between sections, never two. Every block on this page is
-          separated by one.
-        </p>
-        <hr className="border-t border-hairline" />
+      <Block index="05" title="Eyebrow, divider and stat">
+        <SubHeading>Eyebrow</SubHeading>
+        <div className="space-y-4">
+          <Eyebrow>Selected work</Eyebrow>
+          <Eyebrow index="02">What a business website has to do</Eyebrow>
+        </div>
+
+        <SubHeading>Divider</SubHeading>
+        <Note>One hairline between sections, never two.</Note>
+        <Divider />
+
+        <SubHeading>Stat</SubHeading>
+        <Note>
+          Case-study results. Three per page, mono label over a serif figure.
+        </Note>
+        <div className="grid gap-8 sm:grid-cols-3">
+          <Stat label="Largest contentful paint" value="1.4s" note="On a throttled 4G phone." />
+          <Stat label="Manual invoice steps" value="0" note="Down from eleven." />
+          <Stat label="Lighthouse, mobile" value="98" note="Across all four categories." />
+        </div>
       </Block>
-    </div>
+
+      <Block index="06" title="Masked line rise">
+        <Note>
+          §3.5.2, and the only heading animation on the site. The heading below
+          is split into the lines the browser actually drew, each rising from
+          110% behind its own mask, 700ms with a 70ms stagger. Narrow the window
+          and it re-splits — debounced, so it settles rather than thrashing.
+          <strong className="font-normal text-primary">
+            {' '}
+            h1 and h2 only.
+          </strong>
+        </Note>
+        <div className="resize-x overflow-auto rounded-(--radius-base) border border-hairline p-6 [min-width:18rem]">
+          <MaskedLines
+            as="h2"
+            className="text-display-l"
+            text="A website is not a brochure anymore, it is the part of your business that works while you sleep"
+          />
+        </div>
+        <Note>
+          The box above is resizable by its bottom-right corner, so the re-split
+          can be checked without changing the window.
+        </Note>
+      </Block>
+
+      <Block index="07" title="Reveal">
+        <Note>
+          §3.5.3, for everything that is not an h1 or h2. Opacity and a 12px
+          rise over 500ms, staggered 60ms by list position. Scroll it out of
+          view and back — it fires once.
+        </Note>
+        <div className="space-y-3">
+          {['First line', 'Second line', 'Third line', 'Fourth line'].map(
+            (line, i) => (
+              <Reveal
+                key={line}
+                index={i}
+                className="rounded-(--radius-base) border border-hairline bg-surface-raised px-5 py-4"
+              >
+                <span className="font-mono text-sm text-secondary">
+                  index={i} · delay {(i * 0.06).toFixed(2)}s
+                </span>
+                <p className="mt-1">{line}</p>
+              </Reveal>
+            ),
+          )}
+        </div>
+      </Block>
+
+      <Block index="08" title="Image wipe">
+        <Note>
+          §3.5.6. A clip-path inset from the bottom edge over 800ms, with the
+          image scaling 1.06 to 1 inside the mask. Never a plain fade. Width and
+          height are real attributes, so the box is reserved before the file
+          loads.
+        </Note>
+        <ImageWipe
+          src="/styleguide-sample.svg"
+          alt="Placeholder graphic standing in for a project screenshot."
+          width={1200}
+          height={750}
+          className="rounded-(--radius-base) border border-hairline"
+        />
+      </Block>
+
+      <Block index="09" title="Marquee">
+        <Note>
+          §3.5.7. Slow continuous scroll that pauses on hover, and on keyboard
+          focus landing inside it. The row is rendered twice so the loop has no
+          seam; the duplicate is hidden from assistive tech.
+        </Note>
+        <Marquee duration={30} className="border-y border-hairline py-6">
+          {STACK.map((label) => (
+            <span
+              key={label}
+              className="mono-label px-8 whitespace-nowrap"
+            >
+              {label}
+            </span>
+          ))}
+        </Marquee>
+      </Block>
+
+      <Block index="10" title="Container and section">
+        <Note>
+          <code className="font-mono">Container</code> is 1200px with the gutter
+          that keeps text off the edge at 375px — this whole page sits in one.{' '}
+          <code className="font-mono">Section</code> adds the vertical rhythm
+          from §3.4 and an optional eyebrow and index, and can draw the single
+          hairline that separates it from the section above.
+        </Note>
+        <div className="rounded-(--radius-base) border border-dashed border-hairline">
+          <div className="border-b border-hairline px-5 py-3 font-mono text-sm text-secondary">
+            {'<Section eyebrow="How I work" index="04">'}
+          </div>
+          <div className="px-5">
+            <div className="py-section">
+              <Eyebrow index="04" className="mb-8">
+                How I work
+              </Eyebrow>
+              <p className="prose-measure">
+                Section padding is{' '}
+                <code className="font-mono">clamp(7rem, 14vh, 12rem)</code>,
+                shown here at the real value.
+              </p>
+            </div>
+          </div>
+        </div>
+      </Block>
+    </Container>
   )
 }

@@ -87,6 +87,20 @@
   --duration-reveal: 500ms;
   --duration-wipe: 800ms;
   --duration-hover: 300ms;
+
+  /* Marquee (§3.5.7). The track renders its children twice, so translating by
+     half its width lands exactly on the start of the duplicate and the loop is
+     seamless. Speed is per-instance via --marquee-duration. */
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 /* Semantic variables. Components use these, never the raw palette above. */
