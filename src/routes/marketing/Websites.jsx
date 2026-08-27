@@ -83,6 +83,7 @@ export function Websites() {
             index={i}
             featured={project.featured}
             priority={i === 0}
+            headingLevel="h2"
             className={project.featured ? 'md:col-span-2' : undefined}
           />
         ))}

@@ -21,6 +21,12 @@ function Lightbox({ images, index, onIndexChange, onClose }) {
   const dialogRef = useRef(/** @type {HTMLDivElement | null} */ (null))
   const image = images[index]
 
+  /* Mount-only: capture the triggering element, lock the body, focus the
+     dialog, and undo all three on unmount. Deliberately not re-run when
+     `index` changes — the fix for a real bug where sharing this with the
+     keydown effect below yanked focus to the Close button after every arrow
+     key press or Previous/Next click, because the whole effect (focus capture
+     included) was re-running on every navigation. */
   useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return undefined
@@ -29,10 +35,23 @@ function Lightbox({ images, index, onIndexChange, onClose }) {
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
+    const first = dialog.querySelector('button:not([disabled])')
+    first?.focus()
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus()
+    }
+  }, [])
+
+  /* Re-subscribed on every navigation so the handler always closes over the
+     current index, but this never touches focus or the body lock. */
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return undefined
+
     const focusable = () =>
       Array.from(dialog.querySelectorAll('button:not([disabled])'))
-
-    focusable()[0]?.focus()
 
     /** @param {KeyboardEvent} event */
     function onKeyDown(event) {
@@ -72,11 +91,7 @@ function Lightbox({ images, index, onIndexChange, onClose }) {
     }
 
     document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('keydown', onKeyDown)
-      document.body.style.overflow = previousOverflow
-      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus()
-    }
+    return () => document.removeEventListener('keydown', onKeyDown)
   }, [images.length, index, onClose, onIndexChange])
 
   return (

@@ -154,8 +154,12 @@ function Field({ id, label, error, required, children }) {
   )
 }
 
+/* No outline-none here: the global :focus-visible rule in globals.css is the
+   signal-blue keyboard ring every interactive element gets, and it is not
+   overridden. The border-bottom colour change on focus is an additional
+   affordance, not a replacement for it. */
 const CONTROL_CLASSES =
-  'mt-3 w-full border-0 border-b bg-transparent pb-2 text-body outline-none transition-colors duration-(--duration-hover) placeholder:text-secondary focus:border-signal'
+  'mt-3 w-full border-0 border-b bg-transparent pb-2 text-body transition-colors duration-(--duration-hover) placeholder:text-secondary focus:border-signal'
 
 /**
  * Contact form.

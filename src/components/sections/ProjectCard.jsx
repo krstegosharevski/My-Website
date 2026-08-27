@@ -11,11 +11,19 @@ import { cn } from '@/lib/cn'
  * ring rather than one per element inside it. The cover arrives with the wipe
  * from §3.5.6 and lifts 1.03 on hover.
  *
+ * `headingLevel` exists because this card sits in two different places in the
+ * heading order: on the home page it follows SelectedWork's own h2, so the
+ * card title is an h3; on the work index there is no section h2 above the
+ * grid, so the card title has to be an h2 itself or the page would skip a
+ * level (h1 straight to h3). Pass the level the surrounding page actually
+ * needs rather than hard-coding one.
+ *
  * @param {object} props
  * @param {import('@/content/types').Project} props.project
  * @param {boolean} [props.featured=false] Wider layout for a full-width slot.
  * @param {boolean} [props.priority=false] Load the cover eagerly.
  * @param {number} [props.index=0] Position, for the reveal stagger.
+ * @param {'h2' | 'h3'} [props.headingLevel='h3']
  * @param {string} [props.className] Extra classes.
  * @returns {JSX.Element}
  */
@@ -24,8 +32,10 @@ export function ProjectCard({
   featured = false,
   priority = false,
   index = 0,
+  headingLevel = 'h3',
   className,
 }) {
+  const Heading = headingLevel
   return (
     <article className={className}>
       <Link to={`/websites/${project.slug}`} className="group block">
@@ -45,14 +55,14 @@ export function ProjectCard({
             {project.type} · {project.client} · {project.year}
           </p>
 
-          <h3
+          <Heading
             className={cn(
               'mt-3 font-display font-normal',
               featured ? 'text-display-l' : 'text-title',
             )}
           >
             {project.title}
-          </h3>
+          </Heading>
 
           <p className="prose-measure mt-3 text-secondary">{project.summary}</p>
 
