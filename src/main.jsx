@@ -1,7 +1,11 @@
+import '@fontsource-variable/newsreader/wght.css'
+import '@fontsource-variable/geist/wght.css'
+import '@fontsource-variable/geist-mono/wght.css'
+import './styles/globals.css'
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import { App } from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

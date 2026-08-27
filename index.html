@@ -4,7 +4,22 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>krste-website-xo</title>
+    <title>Krtse XO — websites and the systems behind them</title>
+    <!--
+      Theme before first paint. Light "paper" is the default; a stored choice wins.
+      This runs synchronously in <head> so there is no flash of the wrong theme.
+    -->
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem('krtse-theme') === 'dark') {
+            document.documentElement.classList.add('dark')
+          }
+        } catch (e) {
+          /* localStorage unavailable (private mode, blocked cookies) — stay light */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

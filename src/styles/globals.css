@@ -1,0 +1,198 @@
+/* Krtse XO — src/styles/globals.css
+   Tailwind v4, CSS-first config. There is no tailwind.config.js in this project.
+
+   Imported once from src/main.jsx, together with the font CSS:
+     import '@fontsource-variable/newsreader/wght.css';
+     import '@fontsource-variable/geist/wght.css';
+     import '@fontsource-variable/geist-mono/wght.css';
+     import './styles/globals.css';
+
+   Light "paper" is the default theme. The inline script in index.html sets the
+   .dark class before first paint so there is no flash. */
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* ---- Blue ---- */
+  --color-signal: #1f5eff; /* fills, focus, active, water tint. Never body text. */
+  --color-signal-lo: #8fb4ff; /* small blue text on dark */
+  --color-signal-ink: #1a4fd6; /* small blue text on paper */
+
+  /* ---- Paper (light) ---- */
+  --color-paper: #faf9f6;
+  --color-paper-raised: #ffffff;
+  --color-paper-hairline: #e5e2dc;
+  --color-paper-text: #14161a;
+  --color-paper-muted: #5c6672;
+
+  /* ---- Ink (dark) ---- */
+  --color-ink: #0b0d10;
+  --color-ink-raised: #14171c;
+  --color-ink-hairline: #1f242c;
+  --color-ink-text: #f4f6f8;
+  --color-ink-muted: #8a93a0;
+
+  /* ---- Type — family names come from @fontsource-variable, exactly as written ---- */
+  --font-display: "Newsreader Variable", ui-serif, Georgia, serif;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, monospace;
+
+  --text-display-xl: clamp(2.5rem, 5.5vw, 4.75rem);
+  --text-display-xl--line-height: 1.05;
+  --text-display-xl--letter-spacing: -0.02em;
+
+  --text-display-l: clamp(1.875rem, 3.5vw, 3rem);
+  --text-display-l--line-height: 1.1;
+  --text-display-l--letter-spacing: -0.018em;
+
+  --text-title: clamp(1.25rem, 2vw, 1.5rem);
+  --text-title--line-height: 1.3;
+
+  --text-lead: clamp(1.125rem, 1.5vw, 1.375rem);
+  --text-lead--line-height: 1.55;
+
+  --text-body: 1.125rem;
+  --text-body--line-height: 1.65;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1;
+  --text-label--letter-spacing: 0.12em;
+
+  /* ---- Semantic aliases ----
+     Added to the starter file so the theme-aware variables defined in
+     @layer base below are reachable as Tailwind utilities: bg-surface,
+     bg-surface-raised, border-hairline, text-primary, text-secondary,
+     text-link. They resolve through the .dark class at runtime, so a
+     component never names a theme.
+
+     Components use these. They never use the raw palette above. */
+  --color-surface: var(--surface-base);
+  --color-surface-raised: var(--surface-raised);
+  --color-hairline: var(--surface-hairline);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-link: var(--text-link);
+
+  /* ---- Layout ---- */
+  --spacing-section: clamp(7rem, 14vh, 12rem);
+  --container-site: 1200px;
+  --radius-base: 4px;
+
+  /* ---- Motion ---- */
+  --ease-mask: cubic-bezier(0.16, 1, 0.3, 1); /* masked line rise */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --duration-mask: 700ms;
+  --duration-reveal: 500ms;
+  --duration-wipe: 800ms;
+  --duration-hover: 300ms;
+}
+
+/* Semantic variables. Components use these, never the raw palette above. */
+@layer base {
+  :root {
+    --surface-base: var(--color-paper);
+    --surface-raised: var(--color-paper-raised);
+    --surface-hairline: var(--color-paper-hairline);
+    --text-primary: var(--color-paper-text);
+    --text-secondary: var(--color-paper-muted);
+    --text-link: var(--color-signal-ink);
+    --water-alpha: 0.07;
+    --water-rgb: 31, 94, 255;
+  }
+
+  .dark {
+    --surface-base: var(--color-ink);
+    --surface-raised: var(--color-ink-raised);
+    --surface-hairline: var(--color-ink-hairline);
+    --text-primary: var(--color-ink-text);
+    --text-secondary: var(--color-ink-muted);
+    --text-link: var(--color-signal-lo);
+    --water-alpha: 0.05;
+  }
+
+  html {
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--surface-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.65;
+  }
+
+  /* Serif is for h1 and h2 only. h3 and below stay in the sans. */
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 450;
+    font-variation-settings: "opsz" 40;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Focus is always visible and always signal blue. Do not remove. */
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+    border-radius: var(--radius-base);
+  }
+
+  ::selection {
+    background-color: var(--color-signal);
+    color: #ffffff;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  /* Wrapper for the masked line rise. The inner span is animated by motion. */
+  .mask-line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+  }
+
+  .hairline {
+    border-color: var(--surface-hairline);
+  }
+
+  .prose-measure {
+    max-width: 70ch;
+  }
+}
