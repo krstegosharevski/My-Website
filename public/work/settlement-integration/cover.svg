@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img">
+  <title>Placeholder</title>
+  <rect width="1600" height="1000" fill="#faf9f6"/>
+  <rect x="0" y="0" width="1600" height="72" fill="#ffffff"/>
+  <line x1="0" y1="72" x2="1600" y2="72" stroke="#e5e2dc" stroke-width="2"/>
+  <circle cx="48" cy="36" r="6" fill="#e5e2dc"/><circle cx="72" cy="36" r="6" fill="#e5e2dc"/><circle cx="96" cy="36" r="6" fill="#e5e2dc"/>
+  <rect x="120" y="150" width="520" height="34" rx="2" fill="#14161a" opacity="0.75"/>
+  <rect x="120" y="204" width="300" height="18" rx="2" fill="#14161a" opacity="0.4"/>
+  <rect x="1300" y="150" width="180" height="44" rx="22" fill="#1f5eff"/>
+  <rect x="120" y="300" width="820" height="20" rx="2" fill="#14161a" opacity="0.220"/>
+  <rect x="1120" y="300" width="360" height="20" rx="2" fill="#14161a" opacity="0.120"/>
+  <rect x="120" y="396" width="640" height="20" rx="2" fill="#14161a" opacity="0.195"/>
+  <rect x="1120" y="396" width="360" height="20" rx="2" fill="#14161a" opacity="0.108"/>
+  <rect x="120" y="492" width="900" height="20" rx="2" fill="#14161a" opacity="0.170"/>
+  <rect x="1120" y="492" width="360" height="20" rx="2" fill="#14161a" opacity="0.096"/>
+  <rect x="120" y="588" width="560" height="20" rx="2" fill="#14161a" opacity="0.145"/>
+  <rect x="1120" y="588" width="360" height="20" rx="2" fill="#14161a" opacity="0.084"/>
+  <rect x="120" y="684" width="760" height="20" rx="2" fill="#14161a" opacity="0.120"/>
+  <rect x="1120" y="684" width="360" height="20" rx="2" fill="#14161a" opacity="0.072"/>
+  <rect x="120" y="780" width="680" height="20" rx="2" fill="#14161a" opacity="0.095"/>
+  <rect x="1120" y="780" width="360" height="20" rx="2" fill="#14161a" opacity="0.060"/>
+  <line x1="120" y1="272" x2="1480" y2="272" stroke="#e5e2dc" stroke-width="2"/>
+  <text x="120" y="940" font-family="ui-monospace, monospace" font-size="22" letter-spacing="2.6" fill="#5c6672">PLACEHOLDER · INTEGRATION · COVER</text>
+</svg>

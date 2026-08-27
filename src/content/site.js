@@ -59,3 +59,49 @@ export const SOCIALS = [
 /** Where the studio is, and the timezone the footer clock runs on. */
 export const LOCATION = 'Skopje, North Macedonia'
 export const TIMEZONE = 'Europe/Skopje'
+
+/* ---------------------------------------------------------------------------
+   Home page copy. §6.2 of the plan, verbatim — it is starter text to overwrite,
+   which is exactly why it lives here rather than inside a component.
+   --------------------------------------------------------------------------- */
+
+export const HERO = {
+  heading: 'I build websites, and the systems behind them.',
+  lead: 'Krtse XO is a one-person studio in Skopje. I design and build business websites, customer portals, and the integrations that connect them to the tools a company already runs on.',
+  primary: { label: 'See the work', to: '/websites' },
+  secondary: { label: 'Start a project', to: '/contact' },
+}
+
+export const ABOUT_STRIP = {
+  eyebrow: 'About me',
+  body: 'I’ve spent the last years building portals and integrations for companies whose systems have to actually work — invoices, payments, settlements, data moving between platforms. I bring the same standard to a five-page website.',
+  link: { label: 'More about me', to: '/about' },
+}
+
+/** TODO: placeholder. One line, one button — write it in your own words. */
+export const CONTACT_CTA = {
+  heading: 'Tell me what you’re building.',
+  body: 'Send a few sentences about the project and I’ll tell you whether I’m the right person for it.',
+  action: { label: 'Start a project', to: '/contact' },
+}
+
+/**
+ * The "Built with" marquee. Tools actually used on this site and on client
+ * work — not a logo wall, and not a claim of partnership.
+ *
+ * @type {string[]}
+ */
+export const BUILT_WITH = [
+  'React',
+  'Vite',
+  'Tailwind',
+  'Node',
+  'PostgreSQL',
+  'Stripe',
+  'Vercel',
+  'Playwright',
+  'TypeScript',
+  'Figma',
+]
+
+export const BUILT_WITH_HEADING = 'Built with'
