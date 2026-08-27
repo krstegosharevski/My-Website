@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { LabelRoll } from '@/components/motion/LabelRoll'
 import { cn } from '@/lib/cn'
 
 /**
@@ -11,40 +11,8 @@ const VARIANTS = {
   /* The one pill on the site. Everything else is 4px. */
   signal:
     'rounded-full bg-signal text-white hover:bg-signal-ink dark:hover:bg-signal-lo dark:hover:text-ink',
-  outline:
-    'rounded-(--radius-base) border border-hairline hover:border-signal',
+  outline: 'rounded-(--radius-base) border border-hairline hover:border-signal',
   ghost: 'rounded-(--radius-base) text-secondary hover:text-primary',
-}
-
-/**
- * The hover label roll from §3.5.4: the label is rendered twice inside a masked
- * box, and on hover the first copy slides out as the duplicate slides in.
- *
- * The duplicate is `aria-hidden` so the label is announced once.
- *
- * @param {object} props
- * @param {boolean} props.rolling Render the duplicate. False under reduced motion.
- * @param {React.ReactNode} props.children
- * @returns {JSX.Element}
- */
-function Label({ rolling, children }) {
-  if (!rolling) {
-    return <span className="block">{children}</span>
-  }
-
-  return (
-    <span className="relative block overflow-hidden">
-      <span className="block transition-transform duration-(--duration-hover) ease-(--ease-out-quart) group-hover:-translate-y-full">
-        {children}
-      </span>
-      <span
-        aria-hidden="true"
-        className="absolute inset-0 block translate-y-full transition-transform duration-(--duration-hover) ease-(--ease-out-quart) group-hover:translate-y-0"
-      >
-        {children}
-      </span>
-    </span>
-  )
 }
 
 /**
@@ -52,10 +20,9 @@ function Label({ rolling, children }) {
  *
  * Renders a `<button>` by default, a react-router `<Link>` when given `to`, or
  * an `<a>` when given `href`. Buttons name the outcome — "Send message", not
- * "Submit".
+ * "Submit" — and the same word carries through the flow.
  *
- * Under reduced motion the duplicate label is not rendered at all, so the
- * control sits in its final state rather than in a paused animation.
+ * The label carries the hover roll from §3.5.4 via `LabelRoll`.
  *
  * @param {object} props
  * @param {ButtonVariant} [props.variant='signal'] Visual weight.
@@ -77,8 +44,6 @@ export function Button({
   children,
   ...rest
 }) {
-  const reducedMotion = useReducedMotion()
-
   const classes = cn(
     'group inline-flex items-center justify-center px-6 py-3',
     'font-sans text-base leading-none',
@@ -88,7 +53,7 @@ export function Button({
     className,
   )
 
-  const label = <Label rolling={!reducedMotion}>{children}</Label>
+  const label = <LabelRoll>{children}</LabelRoll>
 
   if (to) {
     return (
