@@ -41,6 +41,11 @@ export function ImageWipe({
 }) {
   const reducedMotion = useReducedMotion()
 
+  /* The frame reserves the box from the intrinsic ratio, so the layout is final
+     before the file arrives. Relying on the img's own implicit ratio works but
+     depends on a percentage height resolving to auto — this states it. */
+  const frameStyle = { aspectRatio: `${width} / ${height}` }
+
   const image = (
     <img
       src={src}
@@ -55,13 +60,16 @@ export function ImageWipe({
 
   if (reducedMotion) {
     return (
-      <div className={cn('overflow-hidden', className)}>{image}</div>
+      <div className={cn('overflow-hidden', className)} style={frameStyle}>
+        {image}
+      </div>
     )
   }
 
   return (
     <motion.div
       className={cn('overflow-hidden', className)}
+      style={frameStyle}
       initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
       whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
       viewport={{ once: true, amount: 0.2 }}

@@ -35,6 +35,9 @@ export function App() {
           <Route path="/websites/:slug" element={<WebsiteDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          {/* An explicit path so an unknown case-study slug has somewhere real
+              to redirect to, rather than relying on the catch-all. */}
+          <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route
