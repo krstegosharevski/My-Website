@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { ImageWipe } from '@/components/motion/ImageWipe'
 import { Marquee } from '@/components/motion/Marquee'
 import { MaskedLines } from '@/components/motion/MaskedLines'
@@ -9,6 +11,7 @@ import { Divider } from '@/components/primitives/Divider'
 import { Eyebrow } from '@/components/primitives/Eyebrow'
 import { Stat } from '@/components/primitives/Stat'
 import { ThemeToggle } from '@/components/site/ThemeToggle'
+import { WaterField } from '@/components/water/WaterField'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { cn } from '@/lib/cn'
 
@@ -177,6 +180,7 @@ function Swatch({ token }) {
  */
 export function Styleguide() {
   const reducedMotion = useReducedMotion()
+  const [fastWater, setFastWater] = useState(false)
 
   return (
     <Container className="pb-24">
@@ -433,7 +437,66 @@ export function Styleguide() {
         </Marquee>
       </Block>
 
-      <Block index="10" title="Container and section">
+      <Block index="10" title="Water">
+        <Note>
+          §3.6. Four bands, each the sum of three sines with different
+          wavelengths, periods and phases. Amplitude runs 6 to 14px and a full
+          cycle takes 22 to 45 seconds, so at normal speed it should read as
+          still water you happen to notice moving. A ripple opens somewhere new
+          every 25 to 60 seconds and a bird crosses every 60 to 120 seconds —
+          both far too rare to sit and wait for, hence the control below.
+        </Note>
+        <div className="mb-8 flex flex-wrap items-center gap-4">
+          <Chip selected={!fastWater} onClick={() => setFastWater(false)}>
+            Normal speed
+          </Chip>
+          <Chip selected={fastWater} onClick={() => setFastWater(true)}>
+            Time × 20
+          </Chip>
+          <span className="font-mono text-sm text-secondary">
+            {fastWater
+              ? 'A ripple roughly every 1–3s, a bird every 3–6s.'
+              : 'Judge the tuning here. If it draws attention, cut amplitude and opacity — not frame rate.'}
+          </span>
+        </div>
+
+        <SubHeading>variant="lake" · intensity={'{0.6}'}</SubHeading>
+        <Note>
+          The About page background. Content scrolls over a fixed full-viewport
+          layer of this.
+        </Note>
+        <div className="relative h-80 overflow-hidden rounded-(--radius-base) border border-hairline bg-surface-raised">
+          <WaterField
+            variant="lake"
+            intensity={0.6}
+            timeScale={fastWater ? 20 : 1}
+            className="absolute inset-0"
+          />
+          <p className="relative p-8 text-lead">
+            Text sits still on top. The canvas is pointer-events-none and
+            aria-hidden.
+          </p>
+        </div>
+
+        <SubHeading>variant="horizon" · intensity={'{0.35}'}</SubHeading>
+        <Note>
+          The quieter version behind the home hero, pressed into the bottom
+          edge so it never competes with the headline.
+        </Note>
+        <div className="relative h-80 overflow-hidden rounded-(--radius-base) border border-hairline bg-surface-raised">
+          <WaterField
+            variant="horizon"
+            intensity={0.35}
+            timeScale={fastWater ? 20 : 1}
+            className="absolute inset-0"
+          />
+          <p className="relative p-8 text-lead">
+            Quiet water at the bottom edge.
+          </p>
+        </div>
+      </Block>
+
+      <Block index="11" title="Container and section">
         <Note>
           <code className="font-mono">Container</code> is 1200px with the gutter
           that keeps text off the edge at 375px — this whole page sits in one.{' '}
