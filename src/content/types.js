@@ -61,4 +61,64 @@
  * @property {boolean} featured   Featured projects span the full grid width.
  */
 
+/* ---------------------------------------------------------------------------
+   Shop and order shapes. Phase 8 seams — nothing here is wired to a real cart
+   or checkout yet. See src/components/shop/CartProvider.jsx and
+   docs/shop-architecture.md.
+   --------------------------------------------------------------------------- */
+
+/**
+ * @typedef {'digital' | 'service'} ProductKind
+ */
+
+/**
+ * @typedef {object} Product
+ * @property {string} id
+ * @property {string} slug
+ * @property {string} title
+ * @property {string} description
+ * @property {ProductKind} kind    Digital goods ship instantly; services don't.
+ * @property {number} priceCents   Integer cents. Never a float — floats lose
+ *   cents in arithmetic, and a price is exactly the wrong place for that.
+ * @property {string} currency     ISO 4217, e.g. "EUR".
+ * @property {string} image
+ */
+
+/**
+ * @typedef {object} CartItem
+ * @property {string} productId
+ * @property {number} quantity
+ * @property {number} priceCents Captured at add-time, so a later price change
+ *   doesn't alter a cart someone is already holding.
+ */
+
+/**
+ * @typedef {object} Cart
+ * @property {CartItem[]} items
+ * @property {number} subtotalCents Derived from `items`; never stored separately.
+ */
+
+/**
+ * @typedef {'pending' | 'paid' | 'fulfilled' | 'cancelled'} OrderStatus
+ */
+
+/**
+ * @typedef {object} OrderItem
+ * @property {string} productId
+ * @property {string} title      Copied at order time, so a renamed product
+ *   doesn't rewrite the history of what was actually ordered.
+ * @property {number} quantity
+ * @property {number} priceCents Copied at order time, for the same reason.
+ */
+
+/**
+ * @typedef {object} Order
+ * @property {string} id
+ * @property {string} userId
+ * @property {OrderItem[]} items
+ * @property {number} totalCents
+ * @property {OrderStatus} status
+ * @property {string} createdAt ISO 8601.
+ */
+
 export {}

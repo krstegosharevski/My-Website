@@ -6,6 +6,7 @@ import { Footer } from '@/components/site/Footer'
 import { Nav } from '@/components/site/Nav'
 import { ScrollToTop } from '@/components/site/ScrollToTop'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { getCurrentUser } from '@/lib/session'
 
 /** §3.5.8: 250ms fade with a 6px rise on the incoming route. */
 const FADE_DURATION = 0.25
@@ -19,20 +20,22 @@ const FADE_RISE = 6
  * transparent over the hero, so a page can still start at the top of the
  * viewport by pulling its first section up.
  *
- * `Nav` is given `user={null}` explicitly rather than by omission — the prop is
- * the seam auth will fill, and naming it here keeps that visible.
+ * `Nav` reads its `user` prop from `getCurrentUser()` — always `null` today,
+ * since no auth provider is installed. Wiring a real session means changing
+ * what that function returns, not touching this layout.
  *
  * @returns {JSX.Element}
  */
 export function MarketingLayout() {
   const location = useLocation()
   const reducedMotion = useReducedMotion()
+  const user = getCurrentUser()
 
   return (
     <SmoothScroll>
       <ScrollToTop />
       <div className="flex min-h-dvh flex-col">
-        <Nav user={null} />
+        <Nav user={user} />
         <main id="main" className="flex-1 pt-16">
           {reducedMotion ? (
             <Outlet />
