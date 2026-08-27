@@ -2,6 +2,7 @@ import { MaskedLines } from '@/components/motion/MaskedLines'
 import { Button } from '@/components/primitives/Button'
 import { Chip } from '@/components/primitives/Chip'
 import { Container } from '@/components/primitives/Container'
+import { Seo } from '@/components/site/Seo'
 import { WaterField } from '@/components/water/WaterField'
 import {
   ABOUT_BIO,
@@ -40,6 +41,11 @@ export function About() {
       </div>
 
       <Container className="py-section">
+        <Seo
+          title="About — Krtse XO"
+          description="Who builds Krtse XO, what I work with, and how I run a project."
+          path="/about"
+        />
         <MaskedLines
           as="h1"
           text={ABOUT_HEADING}

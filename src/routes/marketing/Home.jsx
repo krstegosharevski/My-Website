@@ -5,6 +5,8 @@ import { Hero } from '@/components/sections/Hero'
 import { Pillars } from '@/components/sections/Pillars'
 import { Process } from '@/components/sections/Process'
 import { SelectedWork } from '@/components/sections/SelectedWork'
+import { Seo } from '@/components/site/Seo'
+import { DEFAULT_DESCRIPTION } from '@/lib/seo'
 
 /**
  * Home page, assembled in the order from §6 of the plan.
@@ -20,6 +22,11 @@ import { SelectedWork } from '@/components/sections/SelectedWork'
 export function Home() {
   return (
     <>
+      <Seo
+        title="Krtse XO — websites and the systems behind them"
+        description={DEFAULT_DESCRIPTION}
+        path="/"
+      />
       <Hero />
       <Pillars />
       <SelectedWork />

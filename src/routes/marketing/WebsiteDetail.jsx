@@ -7,7 +7,9 @@ import { Chip } from '@/components/primitives/Chip'
 import { Container } from '@/components/primitives/Container'
 import { Stat } from '@/components/primitives/Stat'
 import { Gallery } from '@/components/sections/Gallery'
+import { Seo } from '@/components/site/Seo'
 import { getProject, PROJECTS } from '@/content/projects'
+import { absoluteUrl } from '@/lib/seo'
 
 /**
  * One prose section of the case study, capped at the 70ch measure.
@@ -47,6 +49,13 @@ export function WebsiteDetail() {
 
   return (
     <article>
+      <Seo
+        title={`${project.title} — Krtse XO`}
+        description={project.description}
+        path={`/websites/${project.slug}`}
+        image={absoluteUrl(project.cover.src)}
+        type="article"
+      />
       <Container className="pt-section pb-16">
         <p className="mono-label">
           {project.type} · {project.client} · {project.year}

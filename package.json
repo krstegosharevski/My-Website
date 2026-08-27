@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/build-sitemap.js && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "smoke": "vite build --ssr scripts/smoke.jsx --outDir .smoke --logLevel error && node .smoke/smoke.js"
+    "smoke": "vite build --ssr scripts/smoke.jsx --outDir .smoke --logLevel error && node .smoke/smoke.js",
+    "sitemap": "node scripts/build-sitemap.js"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

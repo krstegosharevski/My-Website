@@ -5,6 +5,7 @@ import { Chip } from '@/components/primitives/Chip'
 import { Container } from '@/components/primitives/Container'
 import { Eyebrow } from '@/components/primitives/Eyebrow'
 import { ProjectCard } from '@/components/sections/ProjectCard'
+import { Seo } from '@/components/site/Seo'
 import { getProjectTypes, PROJECTS } from '@/content/projects'
 
 const TYPES = getProjectTypes()
@@ -42,6 +43,11 @@ export function Websites() {
 
   return (
     <Container className="py-section">
+      <Seo
+        title="Websites and portals — Krtse XO"
+        description="Case studies in business websites, customer portals and the integrations that connect them to the tools a company already runs on."
+        path="/websites"
+      />
       <Eyebrow>Work</Eyebrow>
       <MaskedLines
         as="h1"

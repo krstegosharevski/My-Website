@@ -10,6 +10,7 @@ import { Container } from '@/components/primitives/Container'
 import { Divider } from '@/components/primitives/Divider'
 import { Eyebrow } from '@/components/primitives/Eyebrow'
 import { Stat } from '@/components/primitives/Stat'
+import { Seo } from '@/components/site/Seo'
 import { ThemeToggle } from '@/components/site/ThemeToggle'
 import { WaterField } from '@/components/water/WaterField'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
@@ -184,6 +185,12 @@ export function Styleguide() {
 
   return (
     <Container className="pb-24">
+      <Seo
+        title="Styleguide — Krtse XO"
+        description="Internal token and component reference."
+        path="/styleguide"
+        noindex
+      />
       <header className="flex items-start justify-between gap-6 py-16">
         <div>
           <Eyebrow>Reference</Eyebrow>

@@ -15,6 +15,7 @@ import {
   SUBMITTING_LABEL,
   SUCCESS,
 } from '@/content/contact'
+import { Seo } from '@/components/site/Seo'
 import { EMAIL } from '@/content/site'
 import { cn } from '@/lib/cn'
 
@@ -250,6 +251,12 @@ export function Contact() {
   if (status === 'success') {
     return (
       <Container className="py-section">
+        <Seo
+          title="Message sent — Krtse XO"
+          description="Your message has been sent."
+          path="/contact"
+          noindex
+        />
         <div className="prose-measure" role="status">
           <h1 className="text-display-l">{SUCCESS.heading}</h1>
           <p className="mt-6 text-lead text-secondary">{SUCCESS.body}</p>
@@ -265,6 +272,11 @@ export function Contact() {
 
   return (
     <Container className="py-section">
+      <Seo
+        title="Contact — Krtse XO"
+        description="Get in touch about a website, portal or integration project."
+        path="/contact"
+      />
       <MaskedLines
         as="h1"
         text={CONTACT_HEADING}

@@ -2,9 +2,53 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Krtse XO — websites and the systems behind them</title>
+    <meta
+      name="description"
+      content="A one-person studio in Skopje building business websites, customer portals, and the integrations behind them."
+    />
+
+    <!--
+      Site-level fallback. A Vite SPA ships one nearly-empty HTML file, and most
+      social scrapers do not execute JavaScript, so this is what LinkedIn,
+      WhatsApp and Slack actually read for every link on the site — every
+      preview looks the same regardless of which page was shared. The Seo
+      component (src/components/site/Seo.jsx) sets a real per-route title and
+      description for crawlers that do run JavaScript, and for the browser tab.
+      See docs/prerendering.md for the fix that makes every link preview
+      correct.
+
+      The domain below is repeated as a literal because this file cannot import
+      SITE_URL from src/lib/seo.js. Keep the two in sync — both currently carry
+      the same TODO placeholder domain.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Krtse XO" />
+    <meta property="og:title" content="Krtse XO — websites and the systems behind them" />
+    <meta
+      property="og:description"
+      content="A one-person studio in Skopje building business websites, customer portals, and the integrations behind them."
+    />
+    <meta property="og:image" content="https://TODO-krtse-xo.example.com/og/default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Krtse XO — websites and the systems behind them" />
+    <meta
+      name="twitter:description"
+      content="A one-person studio in Skopje building business websites, customer portals, and the integrations behind them."
+    />
+    <meta name="twitter:image" content="https://TODO-krtse-xo.example.com/og/default.png" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
+
     <!--
       Theme before first paint. Light "paper" is the default; a stored choice wins.
       This runs synchronously in <head> so there is no flash of the wrong theme.
@@ -19,6 +63,35 @@
           /* localStorage unavailable (private mode, blocked cookies) — stay light */
         }
       })()
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://TODO-krtse-xo.example.com/#person",
+            "name": "Krtse XO",
+            "url": "https://TODO-krtse-xo.example.com/",
+            "jobTitle": "Web developer",
+            "worksFor": { "@id": "https://TODO-krtse-xo.example.com/#business" }
+          },
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://TODO-krtse-xo.example.com/#business",
+            "name": "Krtse XO",
+            "url": "https://TODO-krtse-xo.example.com/",
+            "description": "A one-person studio in Skopje building business websites, customer portals, and the integrations behind them.",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Skopje",
+              "addressCountry": "MK"
+            },
+            "founder": { "@id": "https://TODO-krtse-xo.example.com/#person" }
+          }
+        ]
+      }
     </script>
   </head>
   <body>
