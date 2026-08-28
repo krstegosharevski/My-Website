@@ -161,7 +161,7 @@ export function Nav({ user = null }) {
       <Container className="flex h-16 items-center justify-between gap-6">
         <Link
           to="/"
-          className="group inline-flex items-center gap-1 font-mono text-sm tracking-(--text-label--letter-spacing) uppercase"
+          className="group inline-flex items-center gap-3 font-mono text-sm tracking-(--text-label--letter-spacing) uppercase"
         >
           {/* Decorative next to the wordmark text, which already names the
               studio — an alt here would have a screen reader announce it twice. */}

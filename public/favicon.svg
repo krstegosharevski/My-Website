@@ -1,15 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" role="img">
   <title>Krtse XO</title>
   <!--
-    Replaces the Vite starter's purple gradient-blob mark, which used colours
-    outside the theme and blur filters that read as the "glowing orbs" pattern
-    banned in CLAUDE.md. Flat signal blue, no gradient, no blur — an X and an O
-    in a single monoline stroke, on the 4px corner radius used everywhere else
-    on the site (scaled up: 6px at this size).
+    A simplified vector of the studio mark: the disc, with the planets in the
+    same arrangement as the source artwork.
+
+    Not the artwork itself. That is a fine stipple drawing, and at tab size
+    (16px at standard DPI, 32px on retina) the stipple collapses into a murky
+    circle with nothing legible in it — checked by rendering it, not assumed.
+    The full photo is still used where it is large enough to read: see
+    apple-touch-icon.png and icon-192/512.png.
+
+    Signal blue field with paper marks, matching the rest of the site's tokens.
+    The blue is load-bearing, not decorative: the source artwork is white on
+    near-black, which would all but vanish against a dark browser tab bar.
+    Flat fills only — no gradient, no blur, nothing that reads as the "glowing
+    orbs" pattern CLAUDE.md bans.
   -->
-  <rect width="48" height="48" rx="6" fill="#1f5eff" />
-  <g fill="none" stroke="#faf9f6" stroke-width="3" stroke-linecap="round">
-    <path d="M12 14l10 20M22 14l-10 20" />
-    <circle cx="33.5" cy="24" r="8" />
+  <circle cx="24" cy="24" r="24" fill="#1f5eff" />
+  <!--
+    First render at 16px was still too fine: five planets plus a starfield
+    read as a blue dot with specks, not distinct shapes. Cut to the three
+    largest planets and enlarged them — fewer, bigger shapes is what actually
+    reads at tab size. No stars; they were already sub-pixel at 16/32px.
+  -->
+  <g fill="#faf9f6">
+    <circle cx="31" cy="34.5" r="8" />
+    <circle cx="29" cy="15" r="7.5" />
+    <circle cx="11" cy="26" r="5.5" />
   </g>
 </svg>
