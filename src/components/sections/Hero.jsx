@@ -63,7 +63,7 @@ export function Hero() {
     <section className="relative -mt-16 flex min-h-dvh items-center overflow-hidden pt-16">
       <WaterField
         variant="horizon"
-        intensity={0.55}
+        intensity={0.7}
         className="absolute inset-0 -z-10"
       />
 

@@ -446,12 +446,15 @@ export function Styleguide() {
 
       <Block index="10" title="Water">
         <Note>
-          §3.6. Four bands, each the sum of three sines with different
-          wavelengths, periods and phases. Amplitude runs 6 to 14px and a full
-          cycle takes 22 to 45 seconds, so at normal speed it should read as
-          still water you happen to notice moving. A ripple opens somewhere new
-          every 25 to 60 seconds and a bird crosses every 60 to 120 seconds —
-          both far too rare to sit and wait for, hence the control below.
+          §3.6, tuned for visibility rather than the letter of the original
+          spec — see the file-level comment in WaterField.jsx for why. Four
+          bands, amplitude 10 to 24px, each with a stroked crest line on top
+          of its fill (the fill alone was never enough contrast to read as
+          motion, regardless of amplitude). A full cycle takes 10 to 33
+          seconds. A ripple opens somewhere new every 16 to 36 seconds, a bird
+          crosses every 60 to 120, and a fish jumps — with its own splash at
+          both ends — every 7 to 15. All three too rare to sit and wait for at
+          normal speed, hence the control below.
         </Note>
         <div className="mb-8 flex flex-wrap items-center gap-4">
           <Chip selected={!fastWater} onClick={() => setFastWater(false)}>
@@ -462,7 +465,7 @@ export function Styleguide() {
           </Chip>
           <span className="font-mono text-sm text-secondary">
             {fastWater
-              ? 'A ripple roughly every 1–3s, a bird every 3–6s.'
+              ? 'A ripple roughly every 1–2s, a fish every ~0.5s, a bird every 3–6s.'
               : 'Judge the tuning here. If it draws attention, cut amplitude and opacity — not frame rate.'}
           </span>
         </div>
@@ -485,16 +488,19 @@ export function Styleguide() {
           </p>
         </div>
 
-        <SubHeading>variant="horizon" · intensity={'{0.55}'}</SubHeading>
+        <SubHeading>variant="horizon" · intensity={'{0.7}'}</SubHeading>
         <Note>
           The quieter version behind the home hero, pressed into the bottom
-          edge so it never competes with the headline. Raised from 0.35 after
-          review found the wave motion imperceptible at that value.
+          edge so it never competes with the headline. The first fish here
+          uses a shorter 3–6s delay rather than the steady-state 7–15s range —
+          on the actual hero that's so it clears the dandelion intro (~2.5s)
+          without a long wait; this demo box inherits the same behaviour since
+          it's the same "horizon" variant.
         </Note>
         <div className="relative h-80 overflow-hidden rounded-(--radius-base) border border-hairline bg-surface-raised">
           <WaterField
             variant="horizon"
-            intensity={0.55}
+            intensity={0.7}
             timeScale={fastWater ? 20 : 1}
             className="absolute inset-0"
           />

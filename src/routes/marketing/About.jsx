@@ -25,17 +25,20 @@ import {
  * page where the water is the foreground event, and a second animation in the
  * same viewport would compete with it.
  *
- * Contrast was measured rather than assumed, against the water tuning at the
- * time (see globals.css). Over the densest part of the water at
+ * Contrast was measured rather than assumed, against `--water-alpha` at its
+ * original value (see globals.css). Over the densest part of the water at
  * `intensity={0.6}`: on paper, body text landed at about 15.3:1 and muted text
  * at about 4.9:1; on dark, about 16.6:1 and 5.8:1. All passed AA for normal
  * text, muted text with less margin than the rest.
  *
- * `intensity` here is deliberately left unchanged from that measurement even
- * though the home hero's went up — `--water-alpha` (globals.css) went up
- * globally as part of the same tuning pass, which still moves this page's
- * effective wash. Re-measure before shipping; muted text (4.9:1) had the
- * least room of the four figures above.
+ * A later pass raised `--water-alpha` chasing visibility, which invalidated
+ * this measurement (flagged here at the time); a further pass reverted it to
+ * the original value once the real fix — a stroked crest line on each band,
+ * not a thicker fill — was found. So the fill wash's contrast is back to
+ * what's measured above. The crest line is new since that measurement: a
+ * 1.25px stroke at several times the fill alpha, which occasionally crosses a
+ * glyph. Its width limits how much any single character's contrast can move,
+ * but it wasn't part of the number above — worth a glance, not a re-measure.
  *
  * @returns {JSX.Element}
  */

@@ -112,13 +112,14 @@
     --text-primary: var(--color-paper-text);
     --text-secondary: var(--color-paper-muted);
     --text-link: var(--color-signal-ink);
-    /* Was 0.07. Raised after review found the water imperceptible — see
-       src/components/water/WaterField.jsx. Kept moderate rather than doubled:
-       this token also sets the About page's background wash, and its bio text
-       contrast was measured against the old value (see the comment on
-       About.jsx) — re-verify that measurement against this value before
-       shipping, since the wash sits directly under the body text there. */
-    --water-alpha: 0.1;
+    /* Reverted to the original 0.07 (a previous pass raised this to 0.1
+       chasing visibility, but that never touched the real cause — see the
+       file-level comment in WaterField.jsx). This value sets the wash behind
+       About's body text, and that page's contrast was measured against 0.07
+       — see the comment on About.jsx. Visibility now comes from the crest
+       line WaterField strokes on each band, which barely touches a glyph's
+       worth of pixels rather than sitting under the whole paragraph. */
+    --water-alpha: 0.07;
     --water-rgb: 31, 94, 255;
   }
 
@@ -129,8 +130,9 @@
     --text-primary: var(--color-ink-text);
     --text-secondary: var(--color-ink-muted);
     --text-link: var(--color-signal-lo);
-    /* Was 0.05. See the light-mode --water-alpha comment above. */
-    --water-alpha: 0.07;
+    /* Reverted to the original 0.05. See the light-mode --water-alpha comment
+       above. */
+    --water-alpha: 0.05;
   }
 
   html {
