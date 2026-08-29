@@ -8,6 +8,24 @@
 
 export const CONTACT_HEADING = 'Tell me about the project'
 
+/**
+ * Prefix on every subject line this form generates, via both the Web3Forms
+ * path and the `mailto:` fallback, so a submission is filterable whichever
+ * route it took.
+ *
+ * Its job is making an inbox rule easy to write and a real enquiry easy to
+ * spot. It is not a secret and cannot act as one: `VITE_` values and the code
+ * around them are compiled into the bundle every visitor downloads, so anyone
+ * reading the JavaScript can see this string and put it in their own subject
+ * line. Filter on the sender address as the actual signal — that is
+ * SPF/DKIM-signed and cannot be forged — and treat this as the human-readable
+ * half. See the inbox filter section in README.md.
+ */
+export const SUBJECT_TAG = '[KRTSE-XO]'
+
+/** Subject fallback when the optional project type select is left empty. */
+export const SUBJECT_FALLBACK_TYPE = 'Enquiry'
+
 export const CONTACT_LEAD =
   'A few sentences is enough to start. I read everything myself and reply within two working days.'
 
@@ -47,6 +65,15 @@ export const SUCCESS = {
 
 export const SEND_FAILED =
   'The message did not send. Check your connection and try again, or email me directly at'
+
+/**
+ * Shown when submit fires within the time-trap window (see Contact.jsx) —
+ * almost always a bot, occasionally someone who pasted every field and hit
+ * Send immediately. Framed as a wait, not an accusation, since it can be a
+ * real person: the fix is simply trying again a moment later.
+ */
+export const TOO_FAST =
+  'That went through faster than a person filling in a form. Wait a moment and press send again.'
 
 /** Shown instead of the form when no Web3Forms key is configured. */
 export const NO_KEY_NOTICE =

@@ -36,7 +36,7 @@ export const NAV_ITEMS = [
 export const NAV_CTA = { label: 'Contact', to: '/contact' }
 
 /** TODO: replace with the real address before deploying. */
-export const EMAIL = 'TODO@example.com'
+export const EMAIL = 'krzzte.gosarevski@gmail.com'
 
 /**
  * @typedef {object} SocialLink

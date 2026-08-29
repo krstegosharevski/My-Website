@@ -67,6 +67,23 @@ A few things this repo intentionally leaves undone, listed with why:
   exactly what's missing and how to produce it.
 - **`.env.local`** — set `VITE_WEB3FORMS_KEY` from [web3forms.com](https://web3forms.com).
 
+### Filtering contact-form mail into an inbox rule
+
+Every submission's subject carries a `[KRTSE-XO]` tag (see `SUBJECT_TAG` in
+`src/content/contact.js`), which makes a filter easy to write — but **filter on
+the sender address, not the subject tag alone**. The tag lives in the public
+JavaScript bundle, so anyone who reads it could put it in their own subject
+line; Web3Forms' sending domain is SPF/DKIM-signed and can't be spoofed the
+same way. The subject tag is for making a real enquiry easy to spot at a
+glance, not for proving one is real.
+
+Read the actual From address off your **first real test submission** — don't
+guess it, Web3Forms' sending address isn't guaranteed stable across accounts
+or over time. Then, in Gmail: **Settings → Filters and Blocked Addresses →
+Create a new filter**, matching `From: <that address>` and
+`Subject: [KRTSE-XO]`, with **Never send it to Spam**, apply a label, and
+optionally mark as important.
+
 ## Deploying
 
 Connect the repository in Vercel; the default Vite build settings work

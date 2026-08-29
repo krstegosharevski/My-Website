@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 
 import { MaskedLines } from '@/components/motion/MaskedLines'
 import { Button } from '@/components/primitives/Button'
@@ -11,9 +11,12 @@ import {
   NO_KEY_NOTICE,
   PROJECT_TYPES,
   SEND_FAILED,
+  SUBJECT_FALLBACK_TYPE,
+  SUBJECT_TAG,
   SUBMIT_LABEL,
   SUBMITTING_LABEL,
   SUCCESS,
+  TOO_FAST,
 } from '@/content/contact'
 import { Seo } from '@/components/site/Seo'
 import { EMAIL } from '@/content/site'
@@ -30,6 +33,16 @@ const ENDPOINT = 'https://api.web3forms.com/submit'
  * download. Nothing else secret goes here.
  */
 const ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_KEY
+
+/**
+ * Time trap: submissions faster than this after the form mounts are almost
+ * always a bot filling every field and firing instantly, not a person. Unlike
+ * the honeypot (a hidden field a real user can never see, so a hit there is
+ * unambiguous), a fast real submission is possible — someone pasting into
+ * every field — so this rejects with a recoverable message rather than
+ * silently discarding it. See TOO_FAST in content/contact.js.
+ */
+const MIN_SUBMIT_MS = 3000
 
 const EMPTY = {
   name: '',
@@ -97,15 +110,28 @@ function omit(record, key) {
 }
 
 /**
+ * The submission subject line, shared by the Web3Forms path and the
+ * `mailto:` fallback so a message is filterable whichever route it took.
+ * See `SUBJECT_TAG` in content/contact.js for why the tag isn't a secret and
+ * shouldn't be treated as spam protection on its own.
+ *
+ * @param {typeof EMPTY} values
+ * @returns {string}
+ */
+function buildSubject(values) {
+  const type = values.projectType || SUBJECT_FALLBACK_TYPE
+  const name = values.name.trim()
+  return name ? `${SUBJECT_TAG} ${type} — ${name}` : `${SUBJECT_TAG} ${type}`
+}
+
+/**
  * Build a `mailto:` fallback carrying whatever has been typed so far.
  *
  * @param {typeof EMPTY} values
  * @returns {string}
  */
 function mailtoHref(values) {
-  const subject = values.projectType
-    ? `${values.projectType} project`
-    : 'Project enquiry'
+  const subject = buildSubject(values)
 
   const body = [
     values.name && `Name: ${values.name}`,
@@ -173,11 +199,23 @@ const CONTROL_CLASSES =
 export function Contact() {
   const baseId = useId()
   const formRef = useRef(/** @type {HTMLFormElement | null} */ (null))
+  /* Read once, at mount, for the time trap in onSubmit. A ref rather than
+     state — this value drives no render of its own. `Date.now()` is impure
+     and this codebase's lint config rejects calling it during render even
+     guarded (the usual lazy-ref-init idiom), so it's set from an effect
+     instead — mutating a ref from an effect is ordinary, only *setState*
+     there is what that rule actually objects to. The gap between mount and
+     the effect running is a fraction of a millisecond, negligible against
+     the 3s threshold below. */
+  const mountedAt = useRef(/** @type {number | null} */ (null))
+  useEffect(() => {
+    mountedAt.current = Date.now()
+  }, [])
 
   const [values, setValues] = useState(EMPTY)
   const [errors, setErrors] = useState(/** @type {Record<string, string>} */ ({}))
   const [status, setStatus] = useState(
-    /** @type {'idle' | 'submitting' | 'success' | 'error'} */ ('idle'),
+    /** @type {'idle' | 'submitting' | 'success' | 'error' | 'too-fast'} */ ('idle'),
   )
 
   const fieldId = (field) => `${baseId}-${field}`
@@ -214,6 +252,16 @@ export function Contact() {
       return
     }
 
+    /* Time trap. Almost always a bot filling every field and firing
+       instantly; occasionally a real person pasting into every field and
+       hitting Send right away. Unlike the honeypot this can false-positive,
+       so — unlike the honeypot — it fails recoverably: TOO_FAST rather than
+       a silent success, and submitting again a moment later goes through. */
+    if (Date.now() - mountedAt.current < MIN_SUBMIT_MS) {
+      setStatus('too-fast')
+      return
+    }
+
     const found = validateAll(values)
     setErrors(found)
 
@@ -234,9 +282,16 @@ export function Contact() {
         },
         body: JSON.stringify({
           access_key: ACCESS_KEY,
-          subject: `${values.projectType || 'Project'} enquiry from ${values.name}`,
+          subject: buildSubject(values),
+          /* replyto/from_name are Web3Forms' documented field names — not
+             verified against a real send from here, since that needs an
+             actual inbox to check. Confirm on the first real test:
+             replying should reach the visitor's address, not Web3Forms, and
+             the inbox row should read as the sender's name. */
           name: values.name,
+          from_name: values.name,
           email: values.email,
+          replyto: values.email,
           company: values.company,
           project_type: values.projectType,
           message: values.message,
@@ -450,6 +505,7 @@ export function Contact() {
 
           <p aria-live="polite" className="text-sm text-secondary">
             {status === 'submitting' ? 'Sending your message.' : ''}
+            {status === 'too-fast' ? TOO_FAST : ''}
             {status === 'error' ? (
               <>
                 {SEND_FAILED}{' '}
