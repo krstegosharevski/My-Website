@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { ImageWipe } from '@/components/motion/ImageWipe'
+import { BrowserFrame } from '@/components/motion/BrowserFrame'
 import { cn } from '@/lib/cn'
 
 /**
@@ -193,12 +193,11 @@ export function Gallery({ images }) {
                 className="group block w-full cursor-zoom-in"
               >
                 <span className="sr-only">Open image {i + 1} full screen</span>
-                <ImageWipe
+                <BrowserFrame
                   src={image.src}
                   alt={image.alt}
                   width={image.width}
                   height={image.height}
-                  className="rounded-(--radius-base) border border-hairline"
                   imgClassName="transition-transform duration-700 ease-(--ease-out-quart) group-hover:scale-[1.03]"
                 />
               </button>

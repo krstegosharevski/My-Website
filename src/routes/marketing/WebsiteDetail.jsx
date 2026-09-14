@@ -1,6 +1,6 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 
-import { ImageWipe } from '@/components/motion/ImageWipe'
+import { BrowserFrame } from '@/components/motion/BrowserFrame'
 import { MaskedLines } from '@/components/motion/MaskedLines'
 import { Reveal } from '@/components/motion/Reveal'
 import { Chip } from '@/components/primitives/Chip'
@@ -95,14 +95,15 @@ export function WebsiteDetail() {
       </Container>
 
       <Container>
-        {/* Above the fold, so this one loads eagerly. */}
-        <ImageWipe
+        {/* Eager rather than lazy — it's the first image on the page, even
+            though the copy above usually pushes it just below the first
+            screen. */}
+        <BrowserFrame
           src={project.cover.src}
           alt={project.cover.alt}
           width={project.cover.width}
           height={project.cover.height}
           priority
-          className="rounded-(--radius-base) border border-hairline"
         />
       </Container>
 

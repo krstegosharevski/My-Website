@@ -17,7 +17,7 @@ import { Websites } from '@/routes/marketing/Websites'
 const ROUTES = [
   '/',
   '/websites',
-  '/websites/freight-invoice-portal',
+  '/websites/cuba-libre',
   '/websites/does-not-exist',
   '/about',
   '/contact',
