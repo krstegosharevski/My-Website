@@ -3,6 +3,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { BrowserFrame } from '@/components/motion/BrowserFrame'
 import { MaskedLines } from '@/components/motion/MaskedLines'
 import { Reveal } from '@/components/motion/Reveal'
+import { Button } from '@/components/primitives/Button'
 import { Chip } from '@/components/primitives/Chip'
 import { Container } from '@/components/primitives/Container'
 import { Stat } from '@/components/primitives/Stat'
@@ -82,14 +83,14 @@ export function WebsiteDetail() {
             ))}
           </ul>
           {project.liveUrl ? (
-            <a
+            <Button
               href={project.liveUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="text-link underline underline-offset-4 decoration-1"
+              variant="outline"
             >
               Visit the live site
-            </a>
+            </Button>
           ) : null}
         </Reveal>
       </Container>

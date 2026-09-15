@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
-import avatar from '@/assets/avatar.png'
 import { LabelRoll } from '@/components/motion/LabelRoll'
 import { Button } from '@/components/primitives/Button'
 import { Container } from '@/components/primitives/Container'
+import { LogoMark } from '@/components/site/LogoMark'
 import { ThemeToggle } from '@/components/site/ThemeToggle'
 import { NAV_CTA, NAV_ITEMS, WORDMARK } from '@/content/site'
 import { useLenis } from '@/hooks/useLenis'
@@ -163,16 +163,7 @@ export function Nav({ user = null }) {
           to="/"
           className="group inline-flex items-center gap-3 font-mono text-sm tracking-(--text-label--letter-spacing) uppercase"
         >
-          {/* Decorative next to the wordmark text, which already names the
-              studio — an alt here would have a screen reader announce it twice. */}
-          <img
-            src={avatar}
-            alt=""
-            width="28"
-            height="28"
-            decoding="async"
-            className="size-7 shrink-0 rounded-full object-cover"
-          />
+          <LogoMark className="size-7 shrink-0" />
           <LabelRoll>{WORDMARK}</LabelRoll>
         </Link>
 
@@ -236,14 +227,7 @@ export function Nav({ user = null }) {
         >
           <Container className="flex h-16 shrink-0 items-center justify-between">
             <span className="inline-flex items-center gap-1 font-mono text-sm tracking-(--text-label--letter-spacing) uppercase">
-              <img
-                src={avatar}
-                alt=""
-                width="28"
-                height="28"
-                decoding="async"
-                className="size-7 shrink-0 rounded-full object-cover"
-              />
+              <LogoMark className="size-7 shrink-0" />
               {WORDMARK}
             </span>
             <button

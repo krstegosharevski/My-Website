@@ -31,6 +31,9 @@ export const PROJECTS = [
     description:
       "A React site for Cuba Libre's three restaurants on Lake Ohrid, each with its own page and an embedded Zenchef reservation panel.",
     stack: ['React', 'Zenchef'],
+    /* Paste the real address here, e.g. 'https://cubalibre.mk', once you have
+       it — the case study's "Visit the live site" button (WebsiteDetail.jsx)
+       only renders when this is non-null, so nothing needs to change there. */
     liveUrl: null,
     /* Same file as images[1] below — only three real photos exist for this
        project, and the second is also the strongest card thumbnail. */

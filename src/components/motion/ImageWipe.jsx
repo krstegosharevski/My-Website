@@ -1,4 +1,5 @@
-import { motion } from 'motion/react'
+import { motion, useInView } from 'motion/react'
+import { useRef } from 'react'
 
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { cn } from '@/lib/cn'
@@ -15,6 +16,19 @@ const SCALE_FROM = 1.06
  *
  * `width` and `height` are required and are set as real attributes, so the box
  * is reserved before the file loads and nothing shifts.
+ *
+ * The in-view check runs on a plain wrapper `<div>` that carries no styling of
+ * its own, not on the clip-path element itself. Confirmed with a controlled
+ * `IntersectionObserver` test (identical element, only the `clip-path` value
+ * changed): a browser's `IntersectionObserver` accounts for an element's own
+ * `clip-path` when computing whether it is intersecting, so a `whileInView`
+ * trigger placed directly on this element deadlocks permanently — its
+ * `initial` state is `inset(100% …)` (zero visible area), which makes it
+ * report as never-intersecting from the very first frame, so the thing meant
+ * to reveal it can never detect it as visible. Every image built with this
+ * component was affected — this was not new, and not specific to any one
+ * page. `useInView` on the wrapper reads real, unclipped geometry, and once
+ * true drives `animate` on the two inner elements instead of `whileInView`.
  *
  * Under reduced motion the image renders fully revealed and unscaled.
  *
@@ -40,6 +54,8 @@ export function ImageWipe({
   imgClassName,
 }) {
   const reducedMotion = useReducedMotion()
+  const wrapperRef = useRef(/** @type {HTMLDivElement | null} */ (null))
+  const inView = useInView(wrapperRef, { once: true, amount: 0.2 })
 
   /* The frame reserves the box from the intrinsic ratio, so the layout is final
      before the file arrives. Relying on the img's own implicit ratio works but
@@ -67,23 +83,23 @@ export function ImageWipe({
   }
 
   return (
-    <motion.div
-      className={cn('overflow-hidden', className)}
-      style={frameStyle}
-      initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
-      whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: DURATION, ease: EASE, delay }}
-    >
+    <div ref={wrapperRef}>
       <motion.div
-        className="h-full w-full"
-        initial={{ scale: SCALE_FROM }}
-        whileInView={{ scale: 1 }}
-        viewport={{ once: true, amount: 0.2 }}
+        className={cn('overflow-hidden', className)}
+        style={frameStyle}
+        initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
+        animate={inView ? { clipPath: 'inset(0% 0% 0% 0%)' } : undefined}
         transition={{ duration: DURATION, ease: EASE, delay }}
       >
-        {image}
+        <motion.div
+          className="h-full w-full"
+          initial={{ scale: SCALE_FROM }}
+          animate={inView ? { scale: 1 } : undefined}
+          transition={{ duration: DURATION, ease: EASE, delay }}
+        >
+          {image}
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </div>
   )
 }
