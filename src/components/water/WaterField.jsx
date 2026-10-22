@@ -114,6 +114,90 @@ const FISH_FIRST_MAX_GAP = 6
 const FISH_OPACITY_MULT = 0.5
 
 /**
+ * The Prespa scene (`scene="prespa"`, home hero only): Golem Grad on the
+ * horizon and pelicans floating on the water. The island shows at every width;
+ * the pelicans only from this width up — below it the hero is a single column
+ * and the birds would crowd the water under the text.
+ */
+const SCENE_MIN_WIDTH = 1024
+
+/**
+ * Golem Grad, traced from a reference photo taken from the lake. Normalised
+ * coordinates throughout — x 0–1 left to right across the island, y 0 at the
+ * top of the crown to 1 at the waterline. Everything is drawn in the water's
+ * own blue, the same flat style as the bands, rather than as a picture.
+ *
+ * `ISLAND_CANOPY` is the line along the bottoms of the tree crowns: a steep
+ * climb at the left end, the high point a third of the way along, then a
+ * long gentle fall to the right. The crowns themselves are scalloped on top
+ * of it when drawn, so it reads as forest, not a smooth hill.
+ */
+const ISLAND_CANOPY = [
+  [0.03, 0.5], [0.05, 0.36], [0.08, 0.26], [0.12, 0.18], [0.19, 0.11],
+  [0.26, 0.07], [0.33, 0.05], [0.42, 0.07], [0.48, 0.12], [0.55, 0.17],
+  [0.62, 0.22], [0.71, 0.3], [0.8, 0.39], [0.87, 0.5], [0.94, 0.64],
+  [0.985, 0.82],
+]
+
+/**
+ * The bare rock under the trees: the long grey limestone wall across the left
+ * half, a smaller face further right where the trees come down nearer the
+ * water, and the strip of rocky shore along the base.
+ */
+const ISLAND_ROCKS = [
+  [
+    [0.012, 0.9], [0.016, 0.62], [0.04, 0.53], [0.07, 0.49], [0.1, 0.52],
+    [0.14, 0.45], [0.19, 0.43], [0.24, 0.46], [0.29, 0.41], [0.35, 0.43],
+    [0.4, 0.4], [0.45, 0.44], [0.5, 0.42], [0.54, 0.47], [0.555, 0.6],
+    [0.585, 0.88],
+  ],
+  [
+    [0.605, 0.88], [0.635, 0.63], [0.67, 0.57], [0.71, 0.6], [0.75, 0.56],
+    [0.775, 0.63], [0.8, 0.88],
+  ],
+  [[0, 0.88], [0.8, 0.87], [0.9, 0.94], [0.92, 1], [0, 1]],
+]
+
+/**
+ * The mainland hills behind, as a fraction of the island's width and height
+ * so they scale with it. One ridge falls in from the left, one rises away to
+ * the right; the island sits in the dip between them, as in the photo.
+ */
+const ISLAND_HILLS = [
+  [[-0.4, 1], [-0.3, 0.62], [-0.2, 0.4], [-0.11, 0.36], [-0.03, 0.48], [0.06, 1]],
+  [[0.9, 1], [0.99, 0.6], [1.1, 0.4], [1.24, 0.3], [1.42, 0.38], [1.7, 0.58], [2.1, 0.8], [2.6, 1]],
+]
+
+/** Fraction of the canvas width the island spans, capped in pixels. */
+const ISLAND_WIDTH = 0.32
+const ISLAND_MAX_WIDTH = 520
+const ISLAND_ASPECT = 0.15
+/** Left edge of the island, as a fraction of the canvas width. */
+const ISLAND_LEFT = 0.6
+/** Below `SCENE_MIN_WIDTH` the island sits in the open water under the
+ *  single-column text instead, larger so it still reads at phone size. */
+const ISLAND_WIDTH_NARROW = 0.68
+const ISLAND_LEFT_NARROW = 0.14
+
+/** Once `sceneVisible` turns on, the island fades in over this many seconds,
+ *  and the pelicans follow after `PELICAN_FADE_DELAY`. */
+const SCENE_FADE = 1.6
+const PELICAN_FADE_DELAY = 0.6
+
+/**
+ * Pelicans floating on the water. Each rides one band's surface, bobbing and
+ * tilting with it, and drifts slowly sideways, wrapping past the edges.
+ * `x` is the starting position as a fraction of the width; `speed` is in
+ * px/s of water time. Nearer bands get larger birds.
+ */
+const PELICANS = [
+  { band: 2, x: 0.56, direction: -1, speed: 5, scale: 1.05 },
+  { band: 2, x: 0.62, direction: -1, speed: 5, scale: 0.92 },
+  { band: 1, x: 0.86, direction: 1, speed: 3.5, scale: 0.78 },
+]
+const PELICAN_OPACITY_MULT = 0.55
+
+/**
  * @param {number} min
  * @param {number} max
  * @returns {number} A value in [min, max). Event gaps are random inside a
@@ -228,6 +312,266 @@ function drawFish(ctx, x, y, pitch, facing, scale) {
 }
 
 /**
+ * @param {number} fx 0–1 across the island.
+ * @returns {number} `ISLAND_CANOPY`'s y at `fx`, linearly interpolated.
+ */
+function canopyAt(fx) {
+  const pts = ISLAND_CANOPY
+  if (fx <= pts[0][0]) return pts[0][1]
+  for (let i = 1; i < pts.length; i += 1) {
+    if (fx <= pts[i][0]) {
+      const [x0, y0] = pts[i - 1]
+      const [x1, y1] = pts[i]
+      return y0 + ((fx - x0) / (x1 - x0)) * (y1 - y0)
+    }
+  }
+  return pts[pts.length - 1][1]
+}
+
+/**
+ * Golem Grad, in layers back to front, all in the water's blue:
+ *
+ * - the mainland hills behind it, faint, cut out where the island stands;
+ * - a squashed reflection under the waterline, which the bands then wash over;
+ * - the wooded crown, densest, its top scalloped into tree crowns, with a few
+ *   rows of smaller crowns inside so it reads as forest;
+ * - the bare rock — the long cliff wall, the smaller face, the rocky shore —
+ *   paler, the way the grey limestone is lighter than the trees in the photo,
+ *   streaked like the rock is;
+ * - a crest line along the top, the same as the bands have.
+ *
+ * Every irregularity comes from the loop index, not `Math.random`, so the
+ * island is the same shape on every frame and every visit.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} left Left edge, CSS pixels.
+ * @param {number} waterline Y of the island's base, CSS pixels.
+ * @param {number} w Width, CSS pixels.
+ * @param {number} h Height, CSS pixels.
+ * @param {string} rgb Water tint as an "r, g, b" triple.
+ * @param {number} alpha Fill alpha of the trees; everything else derives from it.
+ */
+function drawIsland(ctx, left, waterline, w, h, rgb, alpha) {
+  const X = (fx) => left + fx * w
+  const Y = (fy) => waterline - h + fy * h
+  const tint = (a) => `rgba(${rgb}, ${Math.min(a, 0.7)})`
+
+  /* Open path: left side, the scalloped crown, right side. Closing it adds
+     the base along the waterline, which only fills should get. */
+  const silhouette = () => {
+    ctx.moveTo(X(0), Y(1))
+    ctx.lineTo(X(0), Y(0.9))
+    ctx.lineTo(X(0.012), Y(0.86))
+    ctx.lineTo(X(0.016), Y(0.62))
+    ctx.lineTo(X(ISLAND_CANOPY[0][0]), Y(ISLAND_CANOPY[0][1]))
+
+    const end = ISLAND_CANOPY[ISLAND_CANOPY.length - 1][0]
+    for (let fx = ISLAND_CANOPY[0][0], i = 0; fx < end; i += 1) {
+      const next = Math.min(fx + 0.016 + ((i * 7) % 5) * 0.004, end)
+      const bump = h * (0.035 + ((i * 3) % 4) * 0.014 + ((i * 5) % 3) * 0.008)
+      const ya = Y(canopyAt(fx))
+      const yb = Y(canopyAt(next))
+      ctx.quadraticCurveTo(X((fx + next) / 2), Math.min(ya, yb) - bump * 2, X(next), yb)
+      fx = next
+    }
+
+    ctx.lineTo(X(1), Y(0.96))
+    ctx.lineTo(X(1), Y(1))
+  }
+
+  const rocks = () => {
+    for (const poly of ISLAND_ROCKS) {
+      ctx.moveTo(X(poly[0][0]), Y(poly[0][1]))
+      for (let i = 1; i < poly.length; i += 1) ctx.lineTo(X(poly[i][0]), Y(poly[i][1]))
+      ctx.closePath()
+    }
+  }
+
+  // Hills behind, with the island's shape cut out of them.
+  ctx.save()
+  ctx.beginPath()
+  ctx.rect(X(-3), Y(-1), w * 7, h * 2)
+  silhouette()
+  ctx.closePath()
+  ctx.clip('evenodd')
+  ctx.beginPath()
+  for (const ridge of ISLAND_HILLS) {
+    const pts = ridge.map(([x, y]) => [X(x), Y(y)])
+    ctx.moveTo(pts[0][0], pts[0][1])
+    for (let i = 1; i < pts.length - 1; i += 1) {
+      ctx.quadraticCurveTo(
+        pts[i][0],
+        pts[i][1],
+        (pts[i][0] + pts[i + 1][0]) / 2,
+        (pts[i][1] + pts[i + 1][1]) / 2,
+      )
+    }
+    ctx.lineTo(pts[pts.length - 1][0], pts[pts.length - 1][1])
+    ctx.closePath()
+  }
+  ctx.fillStyle = tint(alpha * 0.3)
+  ctx.fill()
+  ctx.restore()
+
+  // Reflection: mirrored about the waterline and squashed.
+  ctx.save()
+  ctx.beginPath()
+  ctx.rect(X(-0.1), waterline, w * 1.2, h)
+  ctx.clip()
+  ctx.translate(0, waterline)
+  ctx.scale(1, -0.45)
+  ctx.translate(0, -waterline)
+  ctx.beginPath()
+  silhouette()
+  ctx.closePath()
+  ctx.fillStyle = tint(alpha * 0.25)
+  ctx.fill()
+  ctx.restore()
+
+  // The wooded crown, and the rows of smaller crowns inside it.
+  ctx.beginPath()
+  silhouette()
+  ctx.closePath()
+  ctx.fillStyle = tint(alpha)
+  ctx.fill()
+
+  ctx.save()
+  ctx.beginPath()
+  silhouette()
+  ctx.closePath()
+  ctx.clip()
+  ctx.strokeStyle = tint(alpha * 0.9)
+  ctx.lineWidth = 1
+  for (let row = 1; row <= 2; row += 1) {
+    for (let fx = 0.06 + row * 0.02, i = 0; fx < 0.95; fx += 0.05 + ((i * 5) % 3) * 0.02, i += 1) {
+      const fy = canopyAt(fx) + row * 0.12
+      if (fy > 0.84) continue
+      const half = w * (0.008 + (i % 2) * 0.003)
+      ctx.beginPath()
+      ctx.moveTo(X(fx) - half, Y(fy))
+      ctx.quadraticCurveTo(X(fx), Y(fy) - h * 0.07, X(fx) + half, Y(fy))
+      ctx.stroke()
+    }
+  }
+  ctx.restore()
+
+  /* The rock replaces the trees where it shows: erase them there, then fill
+     with the paler tone. Safe to erase — nothing has been drawn inside the
+     island's outline except the island. */
+  ctx.save()
+  ctx.beginPath()
+  silhouette()
+  ctx.closePath()
+  ctx.clip()
+  ctx.beginPath()
+  rocks()
+  ctx.globalCompositeOperation = 'destination-out'
+  ctx.fillStyle = '#000'
+  ctx.fill()
+  ctx.globalCompositeOperation = 'source-over'
+  ctx.fillStyle = tint(alpha * 0.42)
+  ctx.fill()
+
+  ctx.clip()
+  ctx.strokeStyle = tint(alpha * 1.1)
+  ctx.lineWidth = 1
+
+  // Vertical streaks down the rock, of uneven length.
+  for (let fx = 0.025, i = 0; fx < 0.8; fx += 0.011 + ((i * 7) % 4) * 0.006, i += 1) {
+    const top = Y(0.4 + ((i * 3) % 5) * 0.06)
+    const bottom = Y(0.86 - (i % 3) * 0.08)
+    if (bottom <= top) continue
+    ctx.beginPath()
+    ctx.moveTo(X(fx), top)
+    ctx.lineTo(X(fx + 0.003), bottom)
+    ctx.stroke()
+  }
+
+
+  // Boulders along the shore.
+  ctx.fillStyle = tint(alpha * 1.1)
+  for (let fx = 0.02, i = 0; fx < 0.8; fx += 0.03 + ((i * 3) % 4) * 0.012, i += 1) {
+    ctx.beginPath()
+    ctx.ellipse(X(fx), Y(0.95), w * (0.005 + (i % 3) * 0.002), h * 0.04, 0, Math.PI, 0)
+    ctx.fill()
+  }
+  ctx.restore()
+
+  // The top edges of the two cliff faces, where the trees end.
+  ctx.strokeStyle = tint(alpha * 1.6)
+  ctx.lineWidth = 1
+  for (const poly of ISLAND_ROCKS.slice(0, 2)) {
+    ctx.beginPath()
+    ctx.moveTo(X(poly[1][0]), Y(poly[1][1]))
+    for (let i = 2; i < poly.length - 1; i += 1) ctx.lineTo(X(poly[i][0]), Y(poly[i][1]))
+    ctx.stroke()
+  }
+
+  // Crest line along the top, like the bands.
+  ctx.beginPath()
+  silhouette()
+  ctx.strokeStyle = tint(alpha * 2.4)
+  ctx.lineWidth = CREST_LINE_WIDTH
+  ctx.stroke()
+}
+
+/**
+ * A pelican floating on the water: a bulky body riding high, a short thick
+ * neck curved back over it, and the long bill angled down with its pouch —
+ * the bill is what makes it read as a pelican rather than a duck. Drawn
+ * facing +x; `facing` mirrors it, and `tilt` rocks it with the slope of the
+ * wave underneath.
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} x
+ * @param {number} y Waterline under the bird.
+ * @param {number} scale
+ * @param {1 | -1} facing
+ * @param {number} tilt Radians.
+ */
+function drawPelican(ctx, x, y, scale, facing, tilt) {
+  ctx.save()
+  ctx.translate(x, y)
+  if (facing === -1) ctx.scale(-1, 1)
+  ctx.rotate(tilt)
+  ctx.scale(scale, scale)
+
+  // Body, riding high on the water, tail end slightly raised.
+  ctx.beginPath()
+  ctx.moveTo(-17, 0)
+  ctx.quadraticCurveTo(-21, -8, -12, -11)
+  ctx.quadraticCurveTo(0, -15, 9, -11)
+  ctx.quadraticCurveTo(15, -8, 15, -2)
+  ctx.quadraticCurveTo(15, 0, 11, 0)
+  ctx.closePath()
+  ctx.fill()
+
+  // Short, thick neck curving back over the body.
+  ctx.beginPath()
+  ctx.moveTo(9, -10)
+  ctx.bezierCurveTo(6, -16, 3, -21, 7, -25)
+  ctx.lineWidth = 4.5
+  ctx.lineCap = 'round'
+  ctx.stroke()
+
+  // Head.
+  ctx.beginPath()
+  ctx.ellipse(8, -26, 3.6, 3, 0, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Long bill angled down, with the pouch hanging under it.
+  ctx.beginPath()
+  ctx.moveTo(10, -27.5)
+  ctx.lineTo(27, -18)
+  ctx.lineTo(25.5, -16.5)
+  ctx.quadraticCurveTo(16, -17, 10, -22.5)
+  ctx.closePath()
+  ctx.fill()
+
+  ctx.restore()
+}
+
+/**
  * The signature ambient element: canvas 2D, four sine-summed bands with a
  * visible crest line, an occasional ripple, an occasional bird, and an
  * occasional jumping fish.
@@ -251,6 +595,13 @@ function drawFish(ctx, x, y, pitch, facing, scale) {
  * @param {number} [props.timeScale=1] Multiplies elapsed time. Only for the
  *   styleguide, where 20 makes ripples, birds and fish observable without
  *   waiting out their real intervals.
+ * @param {'prespa'} [props.scene] Adds Golem Grad on the horizon at every
+ *   width, and pelicans floating on the water at desktop widths only
+ *   (`SCENE_MIN_WIDTH`). Home hero only.
+ * @param {boolean} [props.sceneVisible=true] Holds the scene back while false,
+ *   then fades it in (`SCENE_FADE`) — the hero keeps it hidden until the
+ *   dandelion intro has finished. Read through a ref, so flipping it does not
+ *   restart the water.
  * @param {string} [props.className] Extra classes for the canvas.
  * @returns {JSX.Element}
  */
@@ -258,10 +609,20 @@ export function WaterField({
   variant = 'lake',
   intensity = 1,
   timeScale = 1,
+  scene,
+  sceneVisible = true,
   className,
 }) {
   const reducedMotion = useReducedMotion()
   const canvasRef = useRef(/** @type {HTMLCanvasElement | null} */ (null))
+
+  const sceneVisibleRef = useRef(sceneVisible)
+  /** Set by the main effect: redraws once when no loop is running to do it. */
+  const redrawRef = useRef(/** @type {(() => void) | null} */ (null))
+  useEffect(() => {
+    sceneVisibleRef.current = sceneVisible
+    redrawRef.current?.()
+  }, [sceneVisible])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -300,6 +661,14 @@ export function WaterField({
         ? randomBetween(FISH_FIRST_MIN_GAP, FISH_FIRST_MAX_GAP)
         : randomBetween(FISH_MIN_GAP, FISH_MAX_GAP)
 
+    /* Re-checked on every resize, so shrinking the window below desktop width
+       removes the pelicans and moves the island, and widening it brings them
+       back. */
+    const islandOn = scene === 'prespa'
+    let wide = false
+    /** Water time at which `sceneVisible` was first seen true. */
+    let sceneShownAt = /** @type {number | null} */ (null)
+
     let frame = 0
     let visible = true
     let running = false
@@ -315,6 +684,7 @@ export function WaterField({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
       palette = readPalette(canvas)
+      wide = window.matchMedia(`(min-width: ${SCENE_MIN_WIDTH}px)`).matches
     }
 
     function draw() {
@@ -326,6 +696,38 @@ export function WaterField({
          the horizon, without shading each band separately. The crest line reuses
          the same sampled points as an open, unfilled stroke on top — see the
          file-level comment for why the fill alone was never enough contrast. */
+
+      /* 0 until the scene is let in, then easing up to 1. Reduced motion
+         skips the fade — it only ever gets the one frame. */
+      let islandFade = 0
+      let pelicanFade = 0
+      if (islandOn && sceneVisibleRef.current) {
+        if (sceneShownAt === null) sceneShownAt = elapsed
+        const since = elapsed - sceneShownAt
+        const ease = (t) => 1 - (1 - Math.min(Math.max(t, 0), 1)) ** 3
+        islandFade = reducedMotion ? 1 : ease(since / SCENE_FADE)
+        pelicanFade = reducedMotion ? 1 : ease((since - PELICAN_FADE_DELAY) / SCENE_FADE)
+      }
+
+      /* The island goes down first, so the waves wash over its base. */
+      if (islandFade > 0) {
+        const islandW = Math.min(
+          width * (wide ? ISLAND_WIDTH : ISLAND_WIDTH_NARROW),
+          ISLAND_MAX_WIDTH,
+        )
+        const horizon =
+          height * (layout.top + layout.spread * (0.5 / BANDS.length))
+        drawIsland(
+          ctx,
+          width * (wide ? ISLAND_LEFT : ISLAND_LEFT_NARROW),
+          horizon + 4,
+          islandW,
+          islandW * ISLAND_ASPECT,
+          palette.rgb,
+          palette.alpha * strength * 2.6 * islandFade,
+        )
+      }
+
       for (let b = 0; b < BANDS.length; b += 1) {
         const band = BANDS[b]
         const baseY =
@@ -356,6 +758,23 @@ export function WaterField({
         ctx.strokeStyle = `rgba(${palette.rgb}, ${bandAlpha * CREST_ALPHA_MULTIPLIER})`
         ctx.lineWidth = CREST_LINE_WIDTH
         ctx.stroke()
+
+        /* Pelicans riding this band, drawn now so nearer bands pass in front
+           of farther birds. */
+        if (pelicanFade > 0 && wide) {
+          ctx.fillStyle = `rgba(${palette.inkRgb}, ${PELICAN_OPACITY_MULT * strength * pelicanFade})`
+          ctx.strokeStyle = ctx.fillStyle
+          for (const p of PELICANS) {
+            if (p.band !== b) continue
+            const span = width + 80
+            let x = (p.x * width + 40 + p.direction * p.speed * elapsed) % span
+            if (x < 0) x += span
+            x -= 40
+            const surface = (at) => baseY + surfaceOffset(band, at, width, elapsed) * strength
+            const tilt = Math.atan2(surface(x + 6) - surface(x - 6), 12)
+            drawPelican(ctx, x, surface(x) + 1, p.scale, p.direction, tilt)
+          }
+        }
       }
 
       for (let i = ripples.length - 1; i >= 0; i -= 1) {
@@ -508,6 +927,11 @@ export function WaterField({
     resize()
     draw()
 
+    /* A running loop picks up `sceneVisible` on its next frame by itself. */
+    redrawRef.current = () => {
+      if (!running) draw()
+    }
+
     /* Observing the canvas rather than the window catches the cases the window
        misses: a sidebar opening, content reflowing, the resizable box in the
        styleguide. */
@@ -535,6 +959,7 @@ export function WaterField({
        theme change, so the observers above stay live. */
     if (reducedMotion) {
       return () => {
+        redrawRef.current = null
         clearTimeout(resizeTimer)
         resizeObserver.disconnect()
         themeObserver.disconnect()
@@ -554,6 +979,7 @@ export function WaterField({
     syncRunning()
 
     return () => {
+      redrawRef.current = null
       stop()
       clearTimeout(resizeTimer)
       resizeObserver.disconnect()
@@ -561,7 +987,7 @@ export function WaterField({
       inViewObserver.disconnect()
       document.removeEventListener('visibilitychange', syncRunning)
     }
-  }, [variant, intensity, timeScale, reducedMotion])
+  }, [variant, intensity, timeScale, scene, reducedMotion])
 
   return (
     <canvas

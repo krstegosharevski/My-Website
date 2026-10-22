@@ -16,8 +16,9 @@ import { useReducedMotion } from '@/hooks/useReducedMotion'
  *
  * The dandelion intro (Phase D) lives in its own column beside the headline,
  * not overlapping it — the flower and the text are two separate grid columns,
- * the same `lg:grid-cols-2` split `Pillars` uses. Below `lg` they stack:
- * headline first, flower beneath it.
+ * the same `lg:grid-cols-2` split `Pillars` uses. Below `lg` the flower
+ * plays over the water strip under the actions instead, so it takes no space
+ * of its own once it has faded.
  *
  * Plays on every mount of this component, including a plain refresh — an
  * earlier version gated it to once per browser session via sessionStorage,
@@ -60,14 +61,20 @@ export function Hero() {
   }, [])
 
   return (
-    <section className="relative -mt-16 flex min-h-dvh items-center overflow-hidden pt-16">
+    <section className="relative -mt-16 flex items-center overflow-hidden pt-16 lg:min-h-dvh">
+      {/* Below lg the hero is only as tall as its content, and the water is a
+          short strip under the actions (the island and the bands closer
+          together) instead of the bottom third of a full-height screen —
+          the bottom padding below reserves room for it. */}
       <WaterField
         variant="horizon"
         intensity={0.7}
-        className="absolute inset-0 -z-10"
+        scene="prespa"
+        sceneVisible={revealed}
+        className="absolute inset-x-0 bottom-0 -z-10 h-[440px] lg:top-0 lg:h-full"
       />
 
-      <Container className="py-24">
+      <Container className="pt-24 pb-[260px] md:pb-[300px] lg:py-24">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div>
             <MaskedLines
@@ -98,7 +105,7 @@ export function Hero() {
           </div>
 
           {playIntro ? (
-            <div className="mx-auto w-full max-w-[360px] lg:max-w-[420px]">
+            <div className="absolute inset-x-0 bottom-4 mx-auto w-[240px] lg:static lg:w-full lg:max-w-[420px]">
               <DandelionIntro
                 onComplete={handleIntroComplete}
                 className="pointer-events-none aspect-[300/320] w-full"
