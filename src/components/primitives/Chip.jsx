@@ -12,14 +12,15 @@ import { cn } from '@/lib/cn'
  * @returns {JSX.Element}
  */
 export function Chip({ selected = false, onClick, className, children, ...rest }) {
+  /* Interactive chips are buttons, so they get the liquid-glass pill like
+     every other button (selected = blue glass). Static chips are labels —
+     the stack tags on case studies — and keep the plain hairline tag look. */
   const classes = cn(
-    'inline-flex items-center rounded-(--radius-base) border px-3 py-1.5',
+    'inline-flex items-center px-3 py-1.5',
     'font-mono text-label tracking-(--text-label--letter-spacing) uppercase',
-    'transition-colors duration-(--duration-hover)',
-    selected
-      ? 'border-signal bg-signal text-white'
-      : 'border-hairline text-secondary',
-    onClick && !selected && 'hover:border-signal hover:text-primary',
+    onClick
+      ? cn('glass rounded-full', selected ? 'glass-signal' : 'text-secondary hover:text-primary')
+      : 'rounded-(--radius-base) border border-hairline text-secondary',
     className,
   )
 

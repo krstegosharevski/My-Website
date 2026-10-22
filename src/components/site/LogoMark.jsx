@@ -1,16 +1,15 @@
 /**
- * The studio mark: a signal-blue disc with three paper-white dots, same
- * geometry as `public/favicon.svg` — that file exists as a static asset
- * favicons must be, this exists to sit inline next to the wordmark using
- * theme tokens (`fill-signal`, `fill-paper`) rather than the favicon's
- * hard-coded hex, per CLAUDE.md's no-arbitrary-hex rule.
+ * The studio mark, shown next to the "Krtse XO" wordmark in the nav.
  *
- * `fill-paper` rather than `fill-surface`: the dots need to stay white on the
- * blue disc in both themes, not follow the page's own light/dark surface.
+ * Renders `public/logo.svg`, the single source for every logo on the site —
+ * nav, browser tab, and the phone/app icon PNGs are all made from that one
+ * file. The design (frosted white square, iridescent edge, three dark dots)
+ * lives there rather than inline here: its gradient colours would otherwise be
+ * arbitrary hex in a component, which CLAUDE.md rules out. Static assets like
+ * this one are exempt, the same way the favicon always was.
  *
- * `aria-hidden` — always sits beside the "Krtse XO" wordmark text, which
- * already names the studio; an accessible name here would have a screen
- * reader announce it twice.
+ * Decorative (`alt=""`): it always sits beside the wordmark text, which already
+ * names the studio, so a screen reader would otherwise announce it twice.
  *
  * @param {object} props
  * @param {string} [props.className]
@@ -18,13 +17,13 @@
  */
 export function LogoMark({ className }) {
   return (
-    <svg viewBox="0 0 48 48" aria-hidden="true" className={className}>
-      <circle cx="24" cy="24" r="24" className="fill-signal" />
-      <g className="fill-paper">
-        <circle cx="31" cy="34.5" r="8" />
-        <circle cx="29" cy="15" r="7.5" />
-        <circle cx="11" cy="26" r="5.5" />
-      </g>
-    </svg>
+    <img
+      src="/logo.svg"
+      alt=""
+      width="28"
+      height="28"
+      decoding="async"
+      className={className}
+    />
   )
 }

@@ -195,7 +195,111 @@
   }
 }
 
+/* Registered so the iridescent edge can turn smoothly on hover (.glass). */
+@property --glass-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 200deg;
+}
+
 @layer components {
+  /* ---- Liquid glass (buttons) ----
+     Matches public/logo.svg: frosted body, iridescent edge, a soft wash of the
+     same colours bleeding in from the edge. A recorded exception to the
+     glassmorphism/gradient ban — see CLAUDE.md. Use `.glass` on anything that
+     is a button; add `.glass-signal` for the main action (stronger, thicker
+     iridescent edge), or `.glass-signal-hover` to switch to it on hover.
+
+     Built from two pseudo-elements so the body can stay translucent:
+     ::before is the soft colour wash, fading inward from the edges;
+     ::after is the crisp 1.5px iridescent rim, cut out with a mask.
+     Hover turns the colour wheel (--glass-angle), which is the "liquid" move.
+     Under reduced motion the global rule above makes that turn instant. */
+  .glass {
+    --glass-fill: rgb(255 255 255 / 0.28);
+    --glass-wash: 0.42;
+    --glass-rim: 1.5px;
+    --glass-highlight: rgb(255 255 255 / 0.9);
+    --glass-iris: conic-gradient(
+      from var(--glass-angle),
+      #1f5eff, #5aa8ff, #8fb4ff, #1a4fd6, #5aa8ff, #1f5eff
+    );
+    position: relative;
+    isolation: isolate;
+    border: 0;
+    color: var(--text-primary);
+    background-color: var(--glass-fill);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    backdrop-filter: blur(14px) saturate(1.6);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      inset 0 -1px 2px rgb(11 13 16 / 0.06),
+      0 4px 14px -6px rgb(11 13 16 / 0.18);
+    transition:
+      --glass-angle 700ms var(--ease-out-quart),
+      color var(--duration-hover),
+      background-color var(--duration-hover),
+      box-shadow var(--duration-hover);
+  }
+
+  .glass::before,
+  .glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--glass-iris);
+    pointer-events: none;
+  }
+
+  /* Colour wash hugging the edges; the middle stays clear glass. */
+  .glass::before {
+    opacity: var(--glass-wash);
+    transition: opacity var(--duration-hover);
+    -webkit-mask: radial-gradient(farthest-side, transparent 45%, #000);
+    mask: radial-gradient(farthest-side, transparent 45%, #000);
+  }
+
+  .glass::after {
+    padding: var(--glass-rim);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+  }
+
+  .glass:hover {
+    --glass-angle: 380deg;
+    --glass-wash: 0.65;
+  }
+
+  /* Main action: still clear glass, no blue fill — it stands out through a
+     thicker, brighter iridescent edge and a barely-there blue tint. */
+  .glass-signal,
+  .glass-signal-hover:hover {
+    --glass-fill: rgb(31 94 255 / 0.07);
+    --glass-wash: 0.9;
+    --glass-rim: 2px;
+  }
+
+  .glass-signal:hover {
+    --glass-wash: 1;
+  }
+
+  .dark .glass {
+    --glass-fill: rgb(255 255 255 / 0.04);
+    --glass-highlight: rgb(255 255 255 / 0.16);
+  }
+
+  .dark .glass-signal,
+  .dark .glass-signal-hover:hover {
+    --glass-fill: rgb(31 94 255 / 0.1);
+  }
+
   .mono-label {
     font-family: var(--font-mono);
     font-size: var(--text-label);

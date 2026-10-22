@@ -7,12 +7,14 @@ import { cn } from '@/lib/cn'
  * @typedef {'signal' | 'outline' | 'ghost'} ButtonVariant
  */
 
+/* Every button is a liquid-glass pill (.glass in globals.css). The main
+   action gets a thicker, brighter iridescent edge so it still stands out; outline and ghost are
+   both clear glass and now look the same — kept as separate names so call
+   sites don't need to change. */
 const VARIANTS = {
-  /* The one pill on the site. Everything else is 4px. */
-  signal:
-    'rounded-full bg-signal text-white hover:bg-signal-ink dark:hover:bg-signal-lo dark:hover:text-ink',
-  outline: 'rounded-(--radius-base) border border-hairline hover:border-signal',
-  ghost: 'rounded-(--radius-base) text-secondary hover:text-primary',
+  signal: 'glass glass-signal rounded-full',
+  outline: 'glass rounded-full',
+  ghost: 'glass rounded-full',
 }
 
 /**
@@ -47,7 +49,6 @@ export function Button({
   const classes = cn(
     'group inline-flex items-center justify-center px-6 py-3',
     'font-sans text-base leading-none',
-    'transition-colors duration-(--duration-hover)',
     VARIANTS[variant],
     disabled && 'pointer-events-none opacity-40',
     className,

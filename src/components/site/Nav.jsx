@@ -197,7 +197,7 @@ export function Nav({ user = null }) {
             onClick={() => setOpen(true)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            className="inline-flex size-9 items-center justify-center rounded-(--radius-base) border border-hairline text-secondary transition-colors duration-(--duration-hover) hover:border-signal hover:text-primary md:hidden"
+            className="glass inline-flex size-9 items-center justify-center rounded-full text-secondary hover:text-primary md:hidden"
           >
             <span className="sr-only">Open the menu</span>
             <svg
@@ -233,7 +233,7 @@ export function Nav({ user = null }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="inline-flex size-9 items-center justify-center rounded-(--radius-base) border border-hairline text-secondary transition-colors duration-(--duration-hover) hover:border-signal hover:text-primary"
+              className="glass inline-flex size-9 items-center justify-center rounded-full text-secondary hover:text-primary"
             >
               <span className="sr-only">Close the menu</span>
               <svg

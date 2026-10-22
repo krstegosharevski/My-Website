@@ -37,7 +37,7 @@ Reserved and **not to be installed until their phase**: Stripe, any auth provide
 - **Tokens only.** No arbitrary hex in components. `--signal` never carries body-size text — small blue text uses the theme's `--text-link`.
 - **Light paper is the default theme.** Dark is fully supported, not an afterthought.
 - **Three typefaces, three roles.** `'Newsreader Variable'` for h1/h2 only. `'Geist Variable'` for body and UI. `'Geist Mono Variable'` for eyebrows, labels, indices, chips, metadata.
-- **Radius is 4px**, except the primary button, which is a pill.
+- **Radius is 4px**, except buttons, which are all pills (icon buttons are circles).
 - **`motion` imports come from `motion/react`**, not `framer-motion`.
 - **One `useReducedMotion` hook**, read by every animated component. Reduced motion renders the final state instantly — never a broken intermediate one, never a half-drawn canvas.
 
@@ -63,6 +63,8 @@ Sentence case everywhere, including headings and buttons. Short declarative sent
 Gradient backgrounds as decoration · glassmorphism · glowing orbs · emoji as icons · icon-in-a-circle grids · parallax · custom cursors · scroll-jacking · letter-by-letter heading animation · Title Case · lorem ipsum in committed code · stock photography · fabricated testimonials · numbering anything that isn't a real sequence.
 
 If a request seems to call for one of these, say so and propose the alternative from §3 of the plan.
+
+**Recorded exception — liquid glass:** the studio logo (`public/logo.svg`) and every button use a frosted-glass body with an iridescent gradient edge, after Apple's 2025 design. Chosen deliberately by the owner. Buttons get it from the `.glass` class in `globals.css` (`.glass-signal` for the main action) — use that, don't restyle buttons by hand. It applies to the logo and buttons only; sections, cards, backgrounds and everything else still follow the ban above.
 
 ## Quality floor — every phase, not just the audit
 

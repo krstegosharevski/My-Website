@@ -58,7 +58,7 @@ function SocialSquare({ social }) {
       href={social.href}
       target="_blank"
       rel="noreferrer noopener"
-      className="inline-flex size-11 items-center justify-center rounded-(--radius-base) border border-hairline text-secondary transition-colors duration-(--duration-hover) hover:border-signal hover:bg-signal hover:text-white"
+      className="glass glass-signal-hover inline-flex size-11 items-center justify-center rounded-full text-secondary hover:text-primary"
     >
       <span className="sr-only">{social.label}</span>
       <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">

@@ -109,7 +109,7 @@ function Lightbox({ images, index, onIndexChange, onClose }) {
         <button
           type="button"
           onClick={onClose}
-          className="inline-flex size-9 items-center justify-center rounded-(--radius-base) border border-hairline text-secondary transition-colors duration-(--duration-hover) hover:border-signal hover:text-primary"
+          className="glass inline-flex size-9 items-center justify-center rounded-full text-secondary hover:text-primary"
         >
           <span className="sr-only">Close the image viewer</span>
           <svg
@@ -142,7 +142,7 @@ function Lightbox({ images, index, onIndexChange, onClose }) {
         <button
           type="button"
           onClick={() => onIndexChange((index - 1 + images.length) % images.length)}
-          className="mono-label transition-colors duration-(--duration-hover) hover:text-primary"
+          className="glass mono-label rounded-full px-4 py-2 hover:text-primary"
         >
           Previous
         </button>
@@ -152,7 +152,7 @@ function Lightbox({ images, index, onIndexChange, onClose }) {
         <button
           type="button"
           onClick={() => onIndexChange((index + 1) % images.length)}
-          className="mono-label transition-colors duration-(--duration-hover) hover:text-primary"
+          className="glass mono-label rounded-full px-4 py-2 hover:text-primary"
         >
           Next
         </button>
